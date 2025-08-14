@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Queue.h"
+#include <functional>
 
 template <typename T>
 class BST {
@@ -25,7 +26,14 @@ private:
     Node* searchRec(Node* node, int index) const;
     void destroyTree(Node* node);
     void preOrderRec(Node* node) const;
-    void inOrderRec(Node* node) const;
+    template<typename Func>
+    void inOrderRec(Node* node, Func&& callback) const {
+        if (node) {
+            inOrderRec(node->left, std::forward<Func>(callback));
+            callback(node->data);
+            inOrderRec(node->right, std::forward<Func>(callback));
+        }
+    }
     void postOrderRec(Node* node) const;
     int heightRec(Node* node) const;
     int countNodesRec(Node* node) const;
@@ -45,7 +53,10 @@ public:
 
     // Các phép duyệt cây
     void preOrder() const;    // NLR
-    void inOrder() const;     // LNR
+    template<typename Func>
+    void inOrder(Func&& callback) const {
+        inOrderRec(root, std::forward<Func>(callback));
+    }    // LNR
     void postOrder() const;   // LRN
     void levelOrder() const;  // Duyệt theo mức
 

@@ -8,8 +8,8 @@ struct MuonTra {
     std::string ngay_muon;
     std::string ngay_tra;
     int trang_thai;  // 0: borrowing, 1: returned, 2: lost
+    int ma_the;
 
-    MuonTra* next; // linked list
 };
 
 #endif

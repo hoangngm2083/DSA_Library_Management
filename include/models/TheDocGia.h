@@ -4,18 +4,18 @@
 #include <string>
 
 #include "MuonTra.h"
+#include "data_structs/LinkedList.h"
+
 
 struct TheDocGia {
     int ma_the;
     std::string ho;
     std::string ten;
-    std::string phai; // Nam/Nữ
+    int phai; // 0: Nam,1: Nữ
     int trang_thai;         // 0: locked, 1: active
-    // pointer to linked list of BorrowRecord
-    MuonTra* danh_sach_muon_tra;
+    // pointer to linked list of danh_sach_muon_tra
+    LinkedList<MuonTra*> danh_sach_muon_tra;
 
-    TheDocGia* left;
-    TheDocGia* right;  // BST
 };
 
 #endif

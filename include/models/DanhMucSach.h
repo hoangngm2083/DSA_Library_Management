@@ -7,8 +7,7 @@ struct DanhMucSach {
     std::string ma_sach;   // unique
     int trang_thai;       // 0: available, 1: borrowed, 2: retired
     std::string vi_tri;
-
-    DanhMucSach* next;   // linked list
+    int ISBN;
 };
 
 #endif
