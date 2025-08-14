@@ -3,32 +3,44 @@
 
 #include <iostream>
 #include "Queue.h"
+#include <functional>
 
 template <typename T>
-class BST {
+class BST
+{
 private:
     // Cấu trúc Node với index
-    struct Node {
+    struct Node
+    {
         T data;
-        int index;  // Trường index dùng để so sánh
-        Node* left;
-        Node* right;
-        Node(const T& value, int idx) : data(value), index(idx), left(nullptr), right(nullptr) {}
+        int index; // Trường index dùng để so sánh
+        Node *left;
+        Node *right;
+        Node(const T &value, int idx) : data(value), index(idx), left(nullptr), right(nullptr) {}
     };
 
-    Node* root;  // Gốc của cây
+    Node *root; // Gốc của cây
 
     // Các hàm hỗ trợ đệ quy
-    Node* insertRec(Node* node, const T& value, int index);
-    Node* removeRec(Node* node, int index);
-    Node* findMin(Node* node) const;
-    Node* searchRec(Node* node, int index) const;
-    void destroyTree(Node* node);
-    void preOrderRec(Node* node) const;
-    void inOrderRec(Node* node) const;
-    void postOrderRec(Node* node) const;
-    int heightRec(Node* node) const;
-    int countNodesRec(Node* node) const;
+    Node *insertRec(Node *node, const T &value, int index);
+    Node *removeRec(Node *node, int index);
+    Node *findMin(Node *node) const;
+    Node *searchRec(Node *node, int index) const;
+    void destroyTree(Node *node);
+    void preOrderRec(Node *node) const;
+    template <typename Func>
+    void inOrderRec(Node *node, Func &&callback) const
+    {
+        if (node)
+        {
+            inOrderRec(node->left, std::forward<Func>(callback));
+            callback(node->data);
+            inOrderRec(node->right, std::forward<Func>(callback));
+        }
+    }
+    void postOrderRec(Node *node) const;
+    int heightRec(Node *node) const;
+    int countNodesRec(Node *node) const;
 
 public:
     // Constructor & Destructor
@@ -36,7 +48,7 @@ public:
     ~BST();
 
     // Các thao tác cơ bản
-    void insert(const T& value, int index);
+    void insert(const T &value, int index);
     void remove(int index);
     bool search(int index) const;
     T getData(int index) const;
@@ -44,10 +56,14 @@ public:
     void clear();
 
     // Các phép duyệt cây
-    void preOrder() const;    // NLR
-    void inOrder() const;     // LNR
-    void postOrder() const;   // LRN
-    void levelOrder() const;  // Duyệt theo mức
+    void preOrder() const; // NLR
+    template <typename Func>
+    void inOrder(Func &&callback) const
+    {
+        inOrderRec(root, std::forward<Func>(callback));
+    } // LNR
+    void postOrder() const;  // LRN
+    void levelOrder() const; // Duyệt theo mức
 
     // Các thao tác khác
     int getMinIndex() const;

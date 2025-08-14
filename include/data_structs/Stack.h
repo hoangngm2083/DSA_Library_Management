@@ -5,11 +5,12 @@
 #include <stdexcept>
 
 template <typename T>
-class Stack {
+class Stack
+{
 private:
-    int sp;        // Stack pointer - chỉ số phần tử trên cùng
-    int capacity;  // Dung lượng stack
-    T* nodes;      // Mảng lưu phần tử
+    int sp;       // Stack pointer - chỉ số phần tử trên cùng
+    int capacity; // Dung lượng stack
+    T *nodes;     // Mảng lưu phần tử
 
 public:
     // Constructor
@@ -25,10 +26,10 @@ public:
     bool isFull() const;
 
     // Thêm phần tử vào stack (Push)
-    bool push(const T& x);
+    bool push(const T &x);
 
     // Lấy phần tử ra khỏi stack (Pop)
-    bool pop(T& x);
+    bool pop(T &x);
 
     // Xem phần tử trên cùng nhưng không pop
     T top() const;
@@ -42,6 +43,5 @@ public:
 
 // Include phần cài đặt template
 #include "../../src/data_structs/Stack.cpp"
-
 
 #endif // STACK_H

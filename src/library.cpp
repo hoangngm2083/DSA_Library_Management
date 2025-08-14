@@ -1,7 +1,8 @@
 #include <iostream>
 #include "library.h"
 
-void hien_danh_sach_chuc_nang() {
+void hien_danh_sach_chuc_nang()
+{
     std::cout << "\n===== MENU =====\n";
     std::cout << "1. Quản lý thẻ độc giả\n";
     std::cout << "2. Quản lý đầu sách\n";

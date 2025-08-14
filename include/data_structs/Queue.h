@@ -5,13 +5,14 @@
 #include <stdexcept>
 
 template <typename T>
-class Queue {
+class Queue
+{
 private:
-    int front;     // Chỉ số đầu hàng
-    int rear;      // Chỉ số cuối hàng
-    int count;     // Số phần tử hiện tại
-    int capacity;  // Kích thước tối đa
-    T* nodes;      // Mảng chứa phần tử
+    int front;    // Chỉ số đầu hàng
+    int rear;     // Chỉ số cuối hàng
+    int count;    // Số phần tử hiện tại
+    int capacity; // Kích thước tối đa
+    T *nodes;     // Mảng chứa phần tử
 
 public:
     // Constructor
@@ -27,10 +28,10 @@ public:
     bool isFull() const;
 
     // Thêm phần tử vào queue (Enqueue)
-    bool enqueue(const T& x);
+    bool enqueue(const T &x);
 
     // Loại bỏ phần tử khỏi queue (Dequeue)
-    bool dequeue(T& x);
+    bool dequeue(T &x);
 
     // Lấy phần tử ở đầu nhưng không xóa
     T frontElement() const;
