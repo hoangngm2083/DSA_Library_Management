@@ -55,7 +55,7 @@ public:
     // Ghi file
     void writeToFile(const LinearList<T> &items) const
     {
-        std::ofstream fout("data/muontra_testwrite.txt");
+        std::ofstream fout("data/danhmucsach_testwrite.txt");
         // std::ofstream fout(filePath);
         if (!fout)
         {

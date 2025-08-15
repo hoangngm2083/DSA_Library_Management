@@ -114,19 +114,21 @@ void LinkedList<T>::deleteValue(const T &value)
         return;
     }
 
-    // So sánh con trỏ đầu tiên
+    // Special case: head node
     if (std::is_pointer<T>::value)
     {
-        // Nếu T là con trỏ, so sánh giá trị mà con trỏ trỏ đến
         if (*head->data == *value)
         {
-            deleteFirst();
+            Node *temp = head;
+            head = head->next;
+            delete temp->data; // Delete the DanhMucSach* data
+            delete temp;       // Delete the node
+            size--;
             return;
         }
     }
     else
     {
-        // Nếu T không phải là con trỏ, so sánh trực tiếp giá trị
         if (head->data == value)
         {
             deleteFirst();
@@ -139,16 +141,18 @@ void LinkedList<T>::deleteValue(const T &value)
     {
         if (std::is_pointer<T>::value)
         {
-            // So sánh giá trị mà con trỏ trỏ đến
             if (*(current->next->data) == *value)
             {
-                deleteAfter(current);
+                Node *temp = current->next;
+                current->next = temp->next;
+                delete temp->data; // Delete the DanhMucSach* data
+                delete temp;       // Delete the node
+                size--;
                 return;
             }
         }
         else
         {
-            // So sánh trực tiếp giá trị
             if (current->next->data == value)
             {
                 deleteAfter(current);
