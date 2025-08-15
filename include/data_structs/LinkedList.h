@@ -2,6 +2,7 @@
 #define LINKEDLIST_H
 
 #include <iostream>
+#include <type_traits>
 
 template <typename T>
 class LinkedList
@@ -53,10 +54,24 @@ public:
     void clear();
 
     // Tìm kiếm
-    Node *search(const T &value) const;
+    T search(const T &value) const;
 
     // Duyệt và in danh sách
-    void traverse() const;
+    template <typename Func>
+    void traverse(Func &&callback) const
+    {
+        if (isEmpty())
+        {
+            std::cout << "Danh sách rỗng!\n";
+            return;
+        }
+        Node *current = head;
+        while (current != nullptr)
+        {
+            callback(current->data);
+            current = current->next;
+        }
+    }
 
     // Sắp xếp (selection sort)
     void sort();

@@ -114,21 +114,48 @@ void LinkedList<T>::deleteValue(const T &value)
         return;
     }
 
-    if (head->data == value)
+    // So sánh con trỏ đầu tiên
+    if (std::is_pointer<T>::value)
     {
-        deleteFirst();
-        return;
+        // Nếu T là con trỏ, so sánh giá trị mà con trỏ trỏ đến
+        if (*head->data == *value)
+        {
+            deleteFirst();
+            return;
+        }
+    }
+    else
+    {
+        // Nếu T không phải là con trỏ, so sánh trực tiếp giá trị
+        if (head->data == value)
+        {
+            deleteFirst();
+            return;
+        }
     }
 
     Node *current = head;
-    while (current->next != nullptr && current->next->data != value)
+    while (current->next != nullptr)
     {
+        if (std::is_pointer<T>::value)
+        {
+            // So sánh giá trị mà con trỏ trỏ đến
+            if (*(current->next->data) == *value)
+            {
+                deleteAfter(current);
+                return;
+            }
+        }
+        else
+        {
+            // So sánh trực tiếp giá trị
+            if (current->next->data == value)
+            {
+                deleteAfter(current);
+                return;
+            }
+        }
         current = current->next;
-    }
-
-    if (current->next != nullptr)
-    {
-        deleteAfter(current);
     }
 }
 
@@ -144,40 +171,31 @@ void LinkedList<T>::clear()
 
 // Tìm kiếm
 template <typename T>
-typename LinkedList<T>::Node *LinkedList<T>::search(const T &value) const
+T LinkedList<T>::search(const T &value) const
 {
     Node *current = head;
     while (current != nullptr)
     {
-        if (current->data == value)
+        if (std::is_pointer<T>::value)
         {
-            return current;
+            // So sánh giá trị mà con trỏ trỏ đến
+            if (*(current->data) == *value)
+            {
+                return current->data;
+            }
+        }
+        else
+        {
+            // So sánh trực tiếp giá trị
+            if (current->data == value)
+            {
+                return current->data;
+            }
         }
         current = current->next;
     }
     return nullptr;
 }
-
-// Duyệt và in danh sách
-template <typename T>
-void LinkedList<T>::traverse() const
-{
-    if (isEmpty())
-    {
-        std::cout << "Danh sách rỗng\n";
-        return;
-    }
-
-    Node *current = head;
-    std::cout << "Danh sách: ";
-    while (current != nullptr)
-    {
-        std::cout << current->data << " ";
-        current = current->next;
-    }
-    std::cout << std::endl;
-}
-
 // Sắp xếp (selection sort)
 template <typename T>
 void LinkedList<T>::sort()

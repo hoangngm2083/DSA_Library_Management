@@ -6,6 +6,7 @@
 #include <string>
 #include <stdexcept>
 #include "data_structs/LinearList.h"
+#include <limits>
 
 template <typename T>
 class BaseManager
@@ -34,7 +35,7 @@ public:
         {
             throw std::runtime_error("Lỗi khi đọc số lượng bản ghi từ file: " + filePath);
         }
-
+        fin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         // Khởi tạo LinearList với kích thước phù hợp
         LinearList<T> items(so_records);
 
@@ -54,8 +55,8 @@ public:
     // Ghi file
     void writeToFile(const LinearList<T> &items) const
     {
-        // std::ofstream fout("data/thedocgia_testwrite.txt");
-        std::ofstream fout(filePath);
+        std::ofstream fout("data/muontra_testwrite.txt");
+        // std::ofstream fout(filePath);
         if (!fout)
         {
             throw std::runtime_error("Không thể mở file để ghi: " + filePath);
@@ -75,6 +76,11 @@ protected:
     virtual bool readItem(std::istream &in, T &obj) = 0;
     virtual void writeItem(std::ostream &out, const T &obj) const = 0;
     virtual void saveItems() const = 0;
+    void trimCR(std::string &s)
+    {
+        if (!s.empty() && s.back() == '\r')
+            s.pop_back();
+    }
 };
 
 #endif

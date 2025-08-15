@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Iinclude
+CXXFLAGS = -std=c++11 -Iinclude -g
 SRC = main.cpp \
       src/models/DanhMucSach.cpp \
       src/models/DauSach.cpp \

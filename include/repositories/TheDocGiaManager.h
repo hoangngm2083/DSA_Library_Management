@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <string>
+#include <limits>
 
 #include <random>
 
