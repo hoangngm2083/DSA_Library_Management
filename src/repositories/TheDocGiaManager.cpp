@@ -12,8 +12,7 @@ TheDocGiaManager::TheDocGiaManager() : BaseManager("data/thedocgia.txt")
 
 TheDocGiaManager::~TheDocGiaManager()
 {
-    auto items = this->getAllCards();
-    this->writeToFile(items);
+    this->saveItems();
     this->bst.clear();
 }
 bool TheDocGiaManager::readItem(std::istream &in, TheDocGia &obj)
@@ -176,3 +175,9 @@ bool TheDocGiaManager::isIdExist(int maThe) const
 {
     return this->bst.search(maThe);
 }
+
+void TheDocGiaManager::saveItems() const
+{
+    auto items = this->getAllCards();
+    this->writeToFile(items);
+};

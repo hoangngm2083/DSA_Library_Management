@@ -54,6 +54,7 @@ public:
     // Ghi file
     void writeToFile(const LinearList<T> &items) const
     {
+        // std::ofstream fout("data/thedocgia_testwrite.txt");
         std::ofstream fout(filePath);
         if (!fout)
         {
@@ -73,6 +74,7 @@ public:
 protected:
     virtual bool readItem(std::istream &in, T &obj) = 0;
     virtual void writeItem(std::ostream &out, const T &obj) const = 0;
+    virtual void saveItems() const = 0;
 };
 
 #endif

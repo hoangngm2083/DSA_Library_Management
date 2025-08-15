@@ -20,6 +20,7 @@ private:
     int generateRandomId();
     bool readItem(std::istream &in, TheDocGia &obj) override;
     void writeItem(std::ostream &out, const TheDocGia &obj) const override;
+    void saveItems() const override;
 
 public:
     TheDocGiaManager();
