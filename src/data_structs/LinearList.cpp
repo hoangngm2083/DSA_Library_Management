@@ -7,16 +7,49 @@ LinearList<T>::LinearList(int initialCapacity)
 {
     n = 0;
     capacity = initialCapacity;
-    nodes = new T[capacity];
+    nodes = new T[capacity]; // Đảm bảo cấp phát thành công
+    if (nodes == nullptr) {
+        throw std::bad_alloc(); // Xử lý lỗi cấp phát bộ nhớ
+    }
 }
+
+template <typename T>
+LinearList<T>::LinearList(const LinearList& other)
+{
+    n = other.n;
+    capacity = other.capacity;
+    nodes = new T[capacity];
+    for (int i = 0; i < n; i++) {
+        nodes[i] = other.nodes[i];
+    }
+}
+
+template <typename T>
+LinearList<T>& LinearList<T>::operator=(const LinearList<T>& other) {
+    if (this != &other) {
+        delete[] nodes; // Giải phóng bộ nhớ cũ
+        n = other.n;
+        capacity = other.capacity;
+        nodes = new T[capacity];
+        for (int i = 0; i < n; i++) {
+            nodes[i] = other.nodes[i];
+        }
+    }
+    return *this;
+}
+
 
 // Destructor
 template <typename T>
 LinearList<T>::~LinearList()
 {
+    // Giải phóng mảng động chứa các phần tử
     delete[] nodes;
+    // Tùy chọn: Đặt lại trạng thái (không bắt buộc trong C++)
+    nodes = nullptr;
+    n = 0;
+    capacity = 0;
 }
-
 // Kiểm tra rỗng
 template <typename T>
 bool LinearList<T>::isEmpty() const

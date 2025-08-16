@@ -2,83 +2,69 @@
 #define LINKEDLIST_H
 
 #include <iostream>
-#include <type_traits>
+#include <utility>   // std::swap, std::move
+#include <cstddef>   // std::size_t
 
 template <typename T>
-class LinkedList
-{
+class LinkedList {
 private:
-    // Cấu trúc Node
-    struct Node
-    {
+    struct Node {
         T data;
-        Node *next;
-        Node(const T &value) : data(value), next(nullptr) {}
+        Node* next;
+        explicit Node(const T& value) : data(value), next(nullptr) {}
     };
 
-    Node *head; // Con trỏ đầu danh sách
-    int size;   // Kích thước danh sách
+    Node* head;   // đầu danh sách
+    int   size;   // số node
 
 public:
-    // Constructor
+    // Constructors / Assignment / Destructor
     LinkedList();
-
-    // Destructor
+    LinkedList(const LinkedList& other);            // deep copy node, KHÔNG đụng data
+    LinkedList(LinkedList&& other) noexcept;        // move
+    LinkedList& operator=(const LinkedList& other); // deep copy node
+    LinkedList& operator=(LinkedList&& other) noexcept;
     ~LinkedList();
 
-    // Kiểm tra rỗng
+    // Trạng thái
     bool isEmpty() const;
+    int  getSize() const;
 
-    // Lấy kích thước
-    int getSize() const;
+    // Thao tác chèn
+    void insertFirst(const T& value);
+    void insertAfter(Node* prevNode, const T& value);
+    void insertLast(const T& value);
 
-    // Thêm vào đầu
-    void insertFirst(const T &value);
-
-    // Thêm vào sau một node
-    void insertAfter(Node *prevNode, const T &value);
-
-    // Thêm vào cuối
-    void insertLast(const T &value);
-
-    // Xóa đầu
+    // Thao tác xóa (chỉ xóa node, KHÔNG xóa data)
     void deleteFirst();
+    void deleteAfter(Node* prevNode);
+    bool deleteValue(const T& value); // trả về true nếu xóa được
 
-    // Xóa sau một node
-    void deleteAfter(Node *prevNode);
-
-    // Xóa node chứa giá trị value
-    void deleteValue(const T &value);
-
-    // Xóa toàn bộ danh sách
+    // Xóa toàn bộ node (KHÔNG xóa data)
     void clear();
 
-    // Tìm kiếm
-    T search(const T &value) const;
+    // Tìm kiếm: trả về giá trị tìm thấy (với T là con trỏ => chính con trỏ đó),
+    // nếu không thấy trả về T{} (con trỏ => nullptr).
+    T search(const T& value) const;
 
-    // Duyệt và in danh sách
+    // Duyệt danh sách
     template <typename Func>
-    void traverse(Func &&callback) const
-    {
-        if (isEmpty())
-        {
-            std::cout << "Danh sách rỗng!\n";
-            return;
-        }
-        Node *current = head;
-        while (current != nullptr)
-        {
+    void traverse(Func&& callback) const {
+        Node* current = head;
+        while (current != nullptr) {
             callback(current->data);
             current = current->next;
         }
     }
 
-    // Sắp xếp (selection sort)
+    // Sắp xếp đơn giản (selection) theo toán tử < của T
     void sort();
 
-    // Lấy node đầu tiên (để hỗ trợ các thao tác khác)
-    Node *getHead() const;
+    // Tiện ích
+    Node* getHead() const;
 };
 
+
 #include "../../src/data_structs/LinkedList.cpp"
+
 #endif // LINKEDLIST_H

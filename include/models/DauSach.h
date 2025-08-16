@@ -2,8 +2,8 @@
 #define DAU_SACH_H
 
 #include <string>
-#include "DanhMucSach.h"
 #include "data_structs/LinkedList.h"
+#include "models/DanhMucSach.h"
 
 struct DauSach
 {
@@ -13,9 +13,33 @@ struct DauSach
     std::string tac_gia;
     int nam_xuat_ban;
     std::string the_loai;
+    LinkedList<DanhMucSach*> *dms; // con trỏ đến danh sách (LinkedList sẽ KHÔNG xóa data)
 
-    // pointer to linked list of DanhMucSach
-    LinkedList<DanhMucSach *> danh_muc_sach; // Danh sách đầu sách luôn tăng dần theo tên sách
+    // Constructor
+    DauSach() : ISBN(0), so_trang(0), nam_xuat_ban(0), dms(nullptr) {}
+
+    // Rule of Five: copy / move / assign
+    DauSach(const DauSach& other);
+    DauSach& operator=(const DauSach& other);
+    DauSach(DauSach&& other) noexcept;
+    DauSach& operator=(DauSach&& other) noexcept;
+
+    // Destructor
+    ~DauSach()
+    {
+        // LinkedList::~LinkedList() sẽ chỉ xóa node (theo chỉnh sửa trước)
+        // ở đây chúng ta xóa con trỏ dms (chỉ node), không xóa DanhMucSach* bên trong
+        if (dms != nullptr)
+        {
+            delete dms;
+            dms = nullptr;
+        }
+    }
+
+    void loadDanhMucSach();
+
+    bool operator==(const DauSach &other) const { return this->ISBN == other.ISBN; }
+    bool operator<(const DauSach &other) const { return this->ten_sach < other.ten_sach; }
 };
 
-#endif
+#endif // DAU_SACH_H

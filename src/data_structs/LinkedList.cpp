@@ -1,241 +1,185 @@
 #include "data_structs/LinkedList.h"
 
-// Constructor
+// ===== Constructors / Assignment / Destructor =====
+
 template <typename T>
 LinkedList<T>::LinkedList() : head(nullptr), size(0) {}
 
-// Destructor
 template <typename T>
-LinkedList<T>::~LinkedList()
-{
-    clear();
+LinkedList<T>::LinkedList(const LinkedList& other) : head(nullptr), size(0) {
+    Node* cur = other.getHead();
+    while (cur) {                 // copy từng node; data được copy-shallow
+        insertLast(cur->data);
+        cur = cur->next;
+    }
 }
 
-// Kiểm tra rỗng
 template <typename T>
-bool LinkedList<T>::isEmpty() const
-{
-    return head == nullptr;
+LinkedList<T>::LinkedList(LinkedList&& other) noexcept
+    : head(other.head), size(other.size) {
+    other.head = nullptr;
+    other.size = 0;
 }
 
-// Lấy kích thước
 template <typename T>
-int LinkedList<T>::getSize() const
-{
-    return size;
+LinkedList<T>& LinkedList<T>::operator=(const LinkedList& other) {
+    if (this != &other) {
+        clear();                  // chỉ xóa node cũ
+        Node* cur = other.getHead();
+        while (cur) {
+            insertLast(cur->data);
+            cur = cur->next;
+        }
+    }
+    return *this;
 }
 
-// Thêm vào đầu
 template <typename T>
-void LinkedList<T>::insertFirst(const T &value)
-{
-    Node *newNode = new Node(value);
-    newNode->next = head;
-    head = newNode;
-    size++;
+LinkedList<T>& LinkedList<T>::operator=(LinkedList&& other) noexcept {
+    if (this != &other) {
+        clear();                  // dọn node cũ
+        head = other.head;
+        size = other.size;
+        other.head = nullptr;
+        other.size = 0;
+    }
+    return *this;
 }
 
-// Thêm vào sau một node
 template <typename T>
-void LinkedList<T>::insertAfter(Node *prevNode, const T &value)
-{
-    if (prevNode == nullptr)
-    {
+LinkedList<T>::~LinkedList() {
+    clear();                      // chỉ delete node
+}
+
+// ===== Trạng thái =====
+
+template <typename T>
+bool LinkedList<T>::isEmpty() const { return head == nullptr; }
+
+template <typename T>
+int LinkedList<T>::getSize() const { return size; }
+
+// ===== Chèn =====
+
+template <typename T>
+void LinkedList<T>::insertFirst(const T& value) {
+    Node* node = new Node(value);
+    node->next = head;
+    head = node;
+    ++size;
+}
+
+template <typename T>
+void LinkedList<T>::insertAfter(Node* prevNode, const T& value) {
+    if (!prevNode) {
         std::cerr << "Lỗi: Node trước không thể là null\n";
         return;
     }
-
-    Node *newNode = new Node(value);
-    newNode->next = prevNode->next;
-    prevNode->next = newNode;
-    size++;
+    Node* node = new Node(value);
+    node->next = prevNode->next;
+    prevNode->next = node;
+    ++size;
 }
 
-// Thêm vào cuối
 template <typename T>
-void LinkedList<T>::insertLast(const T &value)
-{
-    if (isEmpty())
-    {
-        insertFirst(value);
-        return;
-    }
-
-    Node *current = head;
-    while (current->next != nullptr)
-    {
-        current = current->next;
-    }
-
-    Node *newNode = new Node(value);
-    current->next = newNode;
-    size++;
+void LinkedList<T>::insertLast(const T& value) {
+    if (isEmpty()) { insertFirst(value); return; }
+    Node* cur = head;
+    while (cur->next) cur = cur->next;
+    cur->next = new Node(value);
+    ++size;
 }
 
-// Xóa đầu
+// ===== Xóa node (KHÔNG xóa data) =====
+
 template <typename T>
-void LinkedList<T>::deleteFirst()
-{
-    if (isEmpty())
-    {
+void LinkedList<T>::deleteFirst() {
+    if (isEmpty()) {
         std::cerr << "Lỗi: Danh sách rỗng\n";
         return;
     }
-
-    Node *temp = head;
+    Node* temp = head;
     head = head->next;
-    delete temp;
-    size--;
+    delete temp;         // chỉ xóa node
+    --size;
 }
 
-// Xóa sau một node
 template <typename T>
-void LinkedList<T>::deleteAfter(Node *prevNode)
-{
-    if (prevNode == nullptr || prevNode->next == nullptr)
-    {
+void LinkedList<T>::deleteAfter(Node* prevNode) {
+    if (!prevNode || !prevNode->next) {
         std::cerr << "Lỗi: Không có node để xóa\n";
         return;
     }
-
-    Node *temp = prevNode->next;
+    Node* temp = prevNode->next;
     prevNode->next = temp->next;
-    delete temp;
-    size--;
+    delete temp;         // chỉ xóa node
+    --size;
 }
 
-// Xóa node chứa giá trị value
 template <typename T>
-void LinkedList<T>::deleteValue(const T &value)
-{
-    if (isEmpty())
-    {
+bool LinkedList<T>::deleteValue(const T& value) {
+    if (isEmpty()) {
         std::cerr << "Lỗi: Danh sách rỗng\n";
-        return;
+        return false;
     }
 
-    // Special case: head node
-    if (std::is_pointer<T>::value)
-    {
-        if (*head->data == *value)
-        {
-            Node *temp = head;
-            head = head->next;
-            delete temp->data; // Delete the DanhMucSach* data
-            delete temp;       // Delete the node
-            size--;
-            return;
-        }
-    }
-    else
-    {
-        if (head->data == value)
-        {
-            deleteFirst();
-            return;
-        }
-    }
-
-    Node *current = head;
-    while (current->next != nullptr)
-    {
-        if (std::is_pointer<T>::value)
-        {
-            if (*(current->next->data) == *value)
-            {
-                Node *temp = current->next;
-                current->next = temp->next;
-                delete temp->data; // Delete the DanhMucSach* data
-                delete temp;       // Delete the node
-                size--;
-                return;
-            }
-        }
-        else
-        {
-            if (current->next->data == value)
-            {
-                deleteAfter(current);
-                return;
-            }
-        }
-        current = current->next;
-    }
-}
-
-// Xóa toàn bộ danh sách
-template <typename T>
-void LinkedList<T>::clear()
-{
-    while (!isEmpty())
-    {
+    if (head->data == value) {    // so sánh địa chỉ với T là con trỏ
         deleteFirst();
+        return true;
+    }
+
+    Node* cur = head;
+    while (cur->next) {
+        if (cur->next->data == value) {
+            Node* temp = cur->next;
+            cur->next = temp->next;
+            delete temp;          // chỉ xóa node
+            --size;
+            return true;
+        }
+        cur = cur->next;
+    }
+    return false;
+}
+
+// ===== Clear =====
+
+template <typename T>
+void LinkedList<T>::clear() {
+    while (!isEmpty()) deleteFirst(); // chỉ xóa node
+}
+
+// ===== Search =====
+
+template <typename T>
+T LinkedList<T>::search(const T& value) const {
+    Node* cur = head;
+    while (cur) {
+        if (cur->data == value)   // với T là con trỏ => so sánh địa chỉ
+            return cur->data;
+        cur = cur->next;
+    }
+    return T{};                   // pointer => nullptr
+}
+
+// ===== Sort (selection) =====
+
+template <typename T>
+void LinkedList<T>::sort() {
+    if (isEmpty() || !head->next) return;
+
+    for (Node* i = head; i; i = i->next) {
+        Node* minNode = i;
+        for (Node* j = i->next; j; j = j->next) {
+            if (j->data < minNode->data) minNode = j;
+        }
+        if (minNode != i) std::swap(i->data, minNode->data);
     }
 }
 
-// Tìm kiếm
+// ===== Utils =====
+
 template <typename T>
-T LinkedList<T>::search(const T &value) const
-{
-    Node *current = head;
-    while (current != nullptr)
-    {
-        if (std::is_pointer<T>::value)
-        {
-            // So sánh giá trị mà con trỏ trỏ đến
-            if (*(current->data) == *value)
-            {
-                return current->data;
-            }
-        }
-        else
-        {
-            // So sánh trực tiếp giá trị
-            if (current->data == value)
-            {
-                return current->data;
-            }
-        }
-        current = current->next;
-    }
-    return nullptr;
-}
-// Sắp xếp (selection sort)
-template <typename T>
-void LinkedList<T>::sort()
-{
-    if (isEmpty() || head->next == nullptr)
-    {
-        return;
-    }
-
-    Node *current = head;
-    while (current != nullptr)
-    {
-        Node *minNode = current;
-        Node *temp = current->next;
-
-        while (temp != nullptr)
-        {
-            if (temp->data < minNode->data)
-            {
-                minNode = temp;
-            }
-            temp = temp->next;
-        }
-
-        // Hoán đổi giá trị
-        T tempData = current->data;
-        current->data = minNode->data;
-        minNode->data = tempData;
-
-        current = current->next;
-    }
-}
-
-// Lấy node đầu tiên
-template <typename T>
-typename LinkedList<T>::Node *LinkedList<T>::getHead() const
-{
+typename LinkedList<T>::Node* LinkedList<T>::getHead() const {
     return head;
 }

@@ -1,0 +1,19 @@
+3
+123456789
+Introduction to Algorithms
+500
+Thomas H. Cormen
+2009
+Computer Science
+987654321
+The C++ Programming Language
+1040
+Bjarne Stroustrup
+2013
+Programming
+456789123
+Clean Code
+464
+Robert C. Martin
+2008
+Software Engineering

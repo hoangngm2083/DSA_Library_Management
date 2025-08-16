@@ -1,0 +1,19 @@
+3
+456789123
+Clean Code
+464
+Robert C. Martin
+2008
+Software Engineering
+111222333
+Design Patterns
+400
+Erich Gamma
+1994
+Software Engineering
+123456789
+Intro to Algorithms
+510
+Thomas H. Cormen
+2010
+Computer Science

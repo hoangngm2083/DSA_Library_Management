@@ -14,6 +14,8 @@ private:
 public:
     // Constructor
     LinearList(int initialCapacity = 10000);
+    LinearList(const LinearList& other);
+    LinearList& operator=(const LinearList& other);
 
     // Destructor
     ~LinearList();
