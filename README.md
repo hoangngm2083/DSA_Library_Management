@@ -35,22 +35,15 @@ hoặc tải `.zip` và giải nén.
 
 Với Makefile:
 ```bash
+mkdir build && cd build
+cmake ..
 make
 ```
 
-Nếu không dùng Makefile:
-```bash
-g++ -std=c++11 -Iinclude main.cpp src/library.cpp -o library
-```
-
-
-
 #### Chạy chương trình
 ```bash
-./library
+./bin/library
 ```
-
-
 
 #### Dọn dẹp file thực thi
 ```bash

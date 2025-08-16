@@ -11,28 +11,28 @@
 //     return 0;
 // }
 
-#include <iostream>
-#include <string>
-#include "repositories/TheDocGiaManager.h"
-#include <functional>
+// #include <iostream>
+// #include <string>
+// #include "repositories/TheDocGiaManager.h"
+// #include <functional>
 
-int main()
-{
+// int main()
+// {
 
-    TheDocGiaManager the_doc_gia;
+//     TheDocGiaManager the_doc_gia;
 
-    LinearList<TheDocGia> result = the_doc_gia.getAllCards();
-    result.traverse([](TheDocGia value)
-                    { std::cout
-                          << "Ma the: " << value.ma_the << "\n"
-                          << "Ho: " << value.ho << "\n"
-                          << "Ten: " << value.ten << "\n"
-                          << "Phai: " << (value.phai == 0 ? "Nam" : "Nu") << "\n"
-                          << "Trang thai: " << value.trang_thai << "\n"
-                          << "-----------------------\n"; });
+//     LinearList<TheDocGia> result = the_doc_gia.getAllCards();
+//     result.traverse([](TheDocGia value)
+//                     { std::cout
+//                           << "Ma the: " << value.ma_the << "\n"
+//                           << "Ho: " << value.ho << "\n"
+//                           << "Ten: " << value.ten << "\n"
+//                           << "Phai: " << (value.phai == 0 ? "Nam" : "Nu") << "\n"
+//                           << "Trang thai: " << value.trang_thai << "\n"
+//                           << "-----------------------\n"; });
 
-    return 0;
-}
+//     return 0;
+// }
 
 // #include <iostream>
 // #include <string>
@@ -321,3 +321,14 @@ int main()
 
 //     return 0;
 // }
+
+// main.cpp
+#include <QApplication>
+#include "view/MainWindow.h"
+
+int main(int argc, char* argv[]) {
+    QApplication app(argc, argv);
+    MainWindow w;
+    w.show();
+    return app.exec();
+}
