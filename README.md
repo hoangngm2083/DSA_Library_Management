@@ -38,6 +38,7 @@ Với Makefile:
 mkdir build && cd build
 cmake ..
 make
+cd bin/ && ./Library
 ```
 
 #### Chạy chương trình

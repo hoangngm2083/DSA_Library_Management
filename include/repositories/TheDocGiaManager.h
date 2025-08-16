@@ -47,6 +47,6 @@ public:
     bool isIdExist(int maThe) const;
 };
 
-#include "../../src/repositories/TheDocGiaManager.cpp"
+// #include "../../src/repositories/TheDocGiaManager.cpp"
 
 #endif // THE_DOC_GIA_MANAGER_H

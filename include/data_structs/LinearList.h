@@ -63,6 +63,6 @@ public:
     void clear();
 };
 
-#include "../../src/data_structs/LinearList.cpp"
+#include "../../src/data_structs/LinearList.tpp"
 
 #endif // LINEARLIST_H

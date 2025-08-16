@@ -47,6 +47,6 @@ public:
 };
 
 // Include phần triển khai template
-#include "../../src/data_structs/Queue.cpp"
+#include "../../src/data_structs/Queue.tpp"
 
 #endif // QUEUE_H

@@ -67,6 +67,6 @@ public:
 };
 
 
-#include "../../src/data_structs/LinkedList.cpp"
+#include "../../src/data_structs/LinkedList.tpp"
 
 #endif // LINKEDLIST_H

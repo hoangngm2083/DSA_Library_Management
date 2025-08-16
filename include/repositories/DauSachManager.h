@@ -45,6 +45,6 @@ public:
     bool addDanhMucSach(int ISBN, DanhMucSach* danh_muc_sach);
 };
 
-#include "../../src/repositories/DauSachManager.cpp"
+// #include "../../src/repositories/DauSachManager.cpp"
 
 #endif // DAU_SACH_MANAGER_H

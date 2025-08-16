@@ -26,49 +26,34 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/view
 )
 
-# Source files
-set(SOURCES
+# Collect all .cpp recursively
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
+    src/*.cpp
     main.cpp
-    src/models/DanhMucSach.cpp
-    src/models/DauSach.cpp
-    src/models/MuonTra.cpp
-    src/models/TheDocGia.cpp
-    src/library.cpp
 )
 
-# View sources
-set(VIEW_SOURCES
-    src/view/MainWindow.cpp
-    src/view/BorrowBookWindow.cpp
+# Collect all headers (not strictly required, but useful for IDEs + AUTOMOC)
+file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS
+    include/*.h
 )
 
-# Headers that need moc (with Q_OBJECT)
-set(VIEW_HEADERS
-    include/view/MainWindow.h
-    include/view/BorrowBookWindow.h
+# Collect all Qt UI files
+file(GLOB_RECURSE UI_FILES CONFIGURE_DEPENDS
+    src/view/*.ui
 )
 
-# Qt UI files
-set(UI_FILES
-    src/view/MainWindow.ui
-)
-
-# Resources (if any, e.g., .qrc)
-set(RESOURCES
-    # resources/resources.qrc
-)
-
-# Combine all sources
-set(ALL_SOURCES
-    ${SOURCES}
-    ${VIEW_SOURCES}
-    ${VIEW_HEADERS}
-    ${UI_FILES}
-    ${RESOURCES}
+# Collect all resources
+file(GLOB_RECURSE RESOURCES CONFIGURE_DEPENDS
+    resources/*.qrc
 )
 
 # Create executable
-add_executable(${PROJECT_NAME} ${ALL_SOURCES})
+add_executable(${PROJECT_NAME}
+    ${SOURCES}
+    ${HEADERS}   # optional: helps IDE, AUTOMOC auto-detects Q_OBJECT anyway
+    ${UI_FILES}
+    ${RESOURCES}
+)
 
 # Link Qt libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE
@@ -85,3 +70,5 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     target_compile_options(${PROJECT_NAME} PRIVATE -g)
 endif()
+
+file(COPY ${CMAKE_SOURCE_DIR}/data DESTINATION ${CMAKE_BINARY_DIR}/bin)

@@ -45,6 +45,8 @@ public:
     bool isRecordExist(const std::string &ma_sach, const std::string &ngay_muon) const;
 };
 
-#include "../../src/repositories/MuonTraManager.cpp"
+extern MuonTraManager muontra_mgr;
+
+// #include "../../src/repositories/MuonTraManager.cpp"
 
 #endif // MUON_TRA_MANAGER_H

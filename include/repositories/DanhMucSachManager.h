@@ -44,6 +44,6 @@ public:
     bool isRecordExist(const std::string &ma_sach) const;
 };
 
-#include "../../src/repositories/DanhMucSachManager.cpp"
+// #include "../../src/repositories/DanhMucSachManager.cpp"
 
 #endif // DANH_MUC_SACH_MANAGER_H

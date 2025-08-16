@@ -74,6 +74,6 @@ public:
     int size() const;
 };
 
-#include "../../src/data_structs/BST.cpp"
+#include "../../src/data_structs/BST.tpp"
 
 #endif // BST_H

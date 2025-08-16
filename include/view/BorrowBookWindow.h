@@ -6,6 +6,14 @@
 #include <QDate>
 #include <QString>
 #include <QVector>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QMessageBox>
+#include <QHeaderView>
+#include "repositories/MuonTraManager.h"
+#include "models/MuonTra.h"
+
 
 class BorrowBookWindow : public QWidget {
     Q_OBJECT
@@ -25,11 +33,7 @@ private:
     QPushButton *btnBorrow;
     QPushButton *btnClose;
 
-    struct BookRecord {
-        QString title;
-        QDate borrowDate;
-    };
-    QVector<BookRecord> borrowedBooks;
+    QVector<MuonTra> borrowedBooks;
 
     void updateBorrowedBooksTable();
     bool hasOverdueBooks() const;

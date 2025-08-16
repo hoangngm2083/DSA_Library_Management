@@ -42,6 +42,6 @@ public:
 };
 
 // Include phần cài đặt template
-#include "../../src/data_structs/Stack.cpp"
+#include "../../src/data_structs/Stack.tpp"
 
 #endif // STACK_H

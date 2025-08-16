@@ -1,5 +1,7 @@
 #include "repositories/MuonTraManager.h"
 
+MuonTraManager muontra_mgr;
+
 MuonTraManager::MuonTraManager() : BaseManager("data/muontra.txt")
 {
     auto items = this->readFromFile();
@@ -149,3 +151,4 @@ void MuonTraManager::saveItems() const
     LinearList<MuonTra> items = getAllRecords();
     this->writeToFile(items);
 }
+
