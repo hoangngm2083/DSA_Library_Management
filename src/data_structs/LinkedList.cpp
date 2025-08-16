@@ -155,11 +155,20 @@ template <typename T>
 T LinkedList<T>::search(const T& value) const {
     Node* cur = head;
     while (cur) {
-        if (cur->data == value)   // với T là con trỏ => so sánh địa chỉ
-            return cur->data;
+        if (std::is_pointer<T>::value) {
+            // Nếu T là con trỏ → so sánh nội dung mà nó trỏ tới
+            if (*(cur->data) == *value) {
+                return cur->data;
+            }
+        } else {
+            // Nếu T là kiểu thường → so sánh trực tiếp
+            if (cur->data == value) {
+                return cur->data;
+            }
+        }
         cur = cur->next;
     }
-    return T{};                   // pointer => nullptr
+    return T{};  // Nếu không tìm thấy: với con trỏ trả về nullptr, với object trả về object mặc định
 }
 
 // ===== Sort (selection) =====

@@ -55,8 +55,8 @@ public:
     // Ghi file
     void writeToFile(const LinearList<T> &items) const
     {
-        std::ofstream fout("data/dausach_testwrite.txt");
-        // std::ofstream fout(filePath);
+        // std::ofstream fout("data/dausach_testwrite.txt");
+        std::ofstream fout(filePath);
         if (!fout)
         {
             throw std::runtime_error("Không thể mở file để ghi: " + filePath);
