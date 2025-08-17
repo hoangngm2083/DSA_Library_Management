@@ -13,6 +13,8 @@
 #include <QHeaderView>
 #include "repositories/MuonTraManager.h"
 #include "models/MuonTra.h"
+#include "view/BorrowDialog.h"
+#include <string>
 
 
 class BorrowBookWindow : public QWidget {
@@ -24,6 +26,8 @@ public:
 private slots:
     void onFindClicked();
     void onBorrowClicked();
+    void onLostClicked();
+    void onReturnClicked();
     void onCloseClicked();
 
 private:
@@ -31,9 +35,12 @@ private:
     QPushButton *btnFind;
     QTableWidget *tableBorrowedBooks;
     QPushButton *btnBorrow;
+    QPushButton *btnReturn;
+    QPushButton *btnLost;
     QPushButton *btnClose;
 
     QVector<MuonTra> borrowedBooks;
+    int cardId;
 
     void updateBorrowedBooksTable();
     bool hasOverdueBooks() const;

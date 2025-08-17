@@ -4,6 +4,7 @@
 #include <string>
 #include "data_structs/LinkedList.h"
 #include "models/DanhMucSach.h"
+#include <cctype>    // std::tolower
 
 struct DauSach
 {

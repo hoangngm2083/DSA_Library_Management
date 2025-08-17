@@ -1,7 +1,16 @@
 #include "repositories/DauSachManager.h"
 
+DauSachManager dau_sach_mgr;
+
+
 DauSachManager::DauSachManager() : BaseManager("data/dausach.txt")
 {
+    this->loadItems();
+}
+
+void DauSachManager::loadItems()
+{
+    list.clear();
     auto items = this->readFromFile();
     for (int i = 0; i < items.size(); i++)
     {
@@ -63,7 +72,7 @@ bool DauSachManager::readItem(std::istream &in, DauSach &obj)
     return true;
 }
 
-void DauSachManager::writeItem(std::ostream &out, const DauSach &obj) const
+void DauSachManager::writeItem(std::ostream &out, const DauSach &obj)
 {
     out << obj.ISBN << "\n"
         << obj.ten_sach << "\n"
@@ -76,6 +85,7 @@ void DauSachManager::writeItem(std::ostream &out, const DauSach &obj) const
 bool DauSachManager::addRecord(int ISBN, const std::string &ten_sach, int so_trang,
                                const std::string &tac_gia, int nam_xuat_ban, const std::string &the_loai)
 {
+    this->loadItems();
     if (isRecordExist(ISBN))
     {
         return false;
@@ -110,11 +120,13 @@ bool DauSachManager::addRecord(int ISBN, const std::string &ten_sach, int so_tra
         }
         list.push(newRecord);
     }
+    this->saveItems();
     return true;
 }
 
 bool DauSachManager::removeRecord(int ISBN)
 {
+    this->loadItems();
     for (int i = 0; i < list.size(); i++)
     {
         if (list[i]->ISBN == ISBN) // Sử dụng -> vì là con trỏ
@@ -126,7 +138,12 @@ bool DauSachManager::removeRecord(int ISBN)
                 delete list[i]->dms;
             }
             delete list[i]; // Giải phóng bộ nhớ của DauSach
-            return list.remove(i); // Xóa con trỏ khỏi list
+            bool flag = list.remove(i); // Xóa con trỏ khỏi list
+            if(flag)
+            {
+                this->saveItems();
+            }
+            return flag;
         }
     }
     std::cerr << "Không tìm thấy đầu sách với ISBN: " << ISBN << "\n";
@@ -134,8 +151,9 @@ bool DauSachManager::removeRecord(int ISBN)
 }
 
 bool DauSachManager::updateRecord(int ISBN, const std::string &ten_sach, int so_trang,
-                                  const std::string &tac_gia, int nam_xuat_ban, const std::string &the_loai)
+                                 const std::string &tac_gia, int nam_xuat_ban, const std::string &the_loai)
 {
+    this->loadItems();
     for (int i = 0; i < list.size(); i++)
     {
         if (list[i]->ISBN == ISBN) // Sử dụng -> vì là con trỏ
@@ -159,14 +177,16 @@ bool DauSachManager::updateRecord(int ISBN, const std::string &ten_sach, int so_
                 }
             }
             list.push(temp);
+            this->saveItems();
             return true;
         }
     }
     return false;
 }
 
-DauSach* DauSachManager::searchRecord(int ISBN) const
+DauSach* DauSachManager::searchRecord(int ISBN)
 {
+    this->loadItems();
     for (int i = 0; i < list.size(); i++)
     {
         if (list[i]->ISBN == ISBN) // Sử dụng -> vì là con trỏ
@@ -177,8 +197,35 @@ DauSach* DauSachManager::searchRecord(int ISBN) const
     return nullptr;
 }
 
-LinearList<DauSach> DauSachManager::getAllRecords() const
+// Hàm phụ để chuyển chuỗi về lowercase
+static std::string toLower(const std::string &s) {
+    std::string result;
+    result.reserve(s.size());
+    for (unsigned char c : s) {
+        result.push_back(std::tolower(c));
+    }
+    return result;
+}
+
+// Tìm tất cả sách có tên chứa keyword (LIKE %keyword%)
+LinearList<DauSach> DauSachManager::searchLikeTenSach(const std::string &keyword) {
+    this->loadItems();
+    LinearList<DauSach> result;
+    std::string keyLower = toLower(keyword);
+
+    for (int i = 0; i < list.size(); i++) {
+        std::string tenLower = toLower(list[i]->ten_sach);
+        if (tenLower.find(keyLower) != std::string::npos) { // std::string::npos là một hằng số đặc biệt của std::string dùng để biểu thị "không tìm thấy".
+            result.push(*list[i]); // trả về danh sách các kết quả khớp
+        }
+    }
+
+    return result;
+}
+
+LinearList<DauSach> DauSachManager::getAllRecords()
 {
+    this->loadItems();
     LinearList<DauSach> result;
     for (int i = 0; i < list.size(); i++)
     {
@@ -191,7 +238,7 @@ LinearList<DauSach> DauSachManager::getAllRecords() const
 }
 
 
-bool DauSachManager::isRecordExist(int ISBN) const
+bool DauSachManager::isRecordExist(int ISBN)
 {
     return searchRecord(ISBN) != nullptr;
 }
@@ -212,13 +259,16 @@ bool DauSachManager::addDanhMucSach(int ISBN, DanhMucSach* danh_muc_sach)
     return true;
 }
 
-void DauSachManager::saveItems() const
+void DauSachManager::saveItems()
 {
-    LinearList<DauSach> items = getAllRecords();
-    LinearList<DauSach> tempList;
-    for (int i = 0; i < items.size(); i++)
+    LinearList<DauSach> result;
+    for (int i = 0; i < list.size(); i++)
     {
-        tempList.push(items[i]); // Sao chép nội dung để lưu
+        if (list[i]) // Kiểm tra con trỏ hợp lệ
+        {
+            result.push(*list[i]); // Sao chép nội dung DauSach
+        }
     }
-    this->writeToFile(tempList);
+
+    this->writeToFile(result);
 }

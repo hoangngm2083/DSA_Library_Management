@@ -35,15 +35,12 @@ hoặc tải `.zip` và giải nén.
 
 Với Makefile:
 ```bash
-mkdir build && cd build
-cmake ..
-make
-cd bin/ && ./Library
+mkdir -p build && cd build && cmake .. && make
 ```
 
 #### Chạy chương trình
 ```bash
-./bin/library
+cd bin && ./Library
 ```
 
 #### Dọn dẹp file thực thi

@@ -2,6 +2,12 @@
 
 DanhMucSachManager::DanhMucSachManager() : BaseManager("data/danhmucsach.txt")
 {
+   this->loadItems();
+}
+
+void DanhMucSachManager::loadItems()
+{
+    list.clear();
     auto items = this->readFromFile();
     for (int i = 0; i < items.size(); i++)
     {
@@ -35,7 +41,7 @@ bool DanhMucSachManager::readItem(std::istream &in, DanhMucSach &obj)
     return true;
 }
 
-void DanhMucSachManager::writeItem(std::ostream &out, const DanhMucSach &obj) const
+void DanhMucSachManager::writeItem(std::ostream &out, const DanhMucSach &obj)
 {
     // Write fields to file
     out << obj.ma_sach << "\n"
@@ -47,6 +53,7 @@ void DanhMucSachManager::writeItem(std::ostream &out, const DanhMucSach &obj) co
 bool DanhMucSachManager::addRecord(const std::string &ma_sach, int trang_thai,
                                     const std::string &vi_tri, int ISBN)
 {
+     this->loadItems();
     // Validate trang_thai
     if (trang_thai < 0 || trang_thai > 2)
     {
@@ -105,7 +112,8 @@ bool DanhMucSachManager::updateRecord(const std::string &ma_sach, int trang_thai
     return true;
 }
 
- LinkedList<DanhMucSach *> DanhMucSachManager::searchRecords(int ISBN) const{
+ LinkedList<DanhMucSach *> DanhMucSachManager::searchRecords(int ISBN){
+     this->loadItems();
     LinkedList<DanhMucSach *> result;
     this->list.traverse([&result, ISBN](DanhMucSach *value)
                         { 
@@ -116,8 +124,9 @@ bool DanhMucSachManager::updateRecord(const std::string &ma_sach, int trang_thai
     return result;
  };
 
-DanhMucSach *DanhMucSachManager::searchRecord(const std::string &ma_sach) const
+DanhMucSach *DanhMucSachManager::searchRecord(const std::string &ma_sach)
 {
+    this->loadItems();
     DanhMucSach temp;
     temp.ma_sach = ma_sach;
 
@@ -125,8 +134,9 @@ DanhMucSach *DanhMucSachManager::searchRecord(const std::string &ma_sach) const
     return list.search(&temp); // Truyền địa chỉ của temp
 }
 
-LinearList<DanhMucSach> DanhMucSachManager::getAllRecords() const
+LinearList<DanhMucSach> DanhMucSachManager::getAllRecords()
 {
+    this->loadItems();
     LinearList<DanhMucSach> result;
     this->list.traverse([&result](DanhMucSach *value)
                         { if (value != nullptr) // Add null check
@@ -136,13 +146,18 @@ LinearList<DanhMucSach> DanhMucSachManager::getAllRecords() const
     return result;
 }
 
-bool DanhMucSachManager::isRecordExist(const std::string &ma_sach) const
+bool DanhMucSachManager::isRecordExist(const std::string &ma_sach)
 {
     return searchRecord(ma_sach) != nullptr;
 }
 
-void DanhMucSachManager::saveItems() const
+void DanhMucSachManager::saveItems()
 {
-    LinearList<DanhMucSach> items = getAllRecords();
-    this->writeToFile(items);
+    LinearList<DanhMucSach> result;
+    this->list.traverse([&result](DanhMucSach *value)
+                        { if (value != nullptr) // Add null check
+                            {
+                                result.push(*value);
+                            } });
+    this->writeToFile(result);
 }

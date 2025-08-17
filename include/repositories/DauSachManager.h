@@ -13,8 +13,9 @@ private:
     LinearList<DauSach*> list; // Danh sách tuyến tính chứa các con trỏ đến đầu sách
 
     bool readItem(std::istream &in, DauSach &obj) override;
-    void writeItem(std::ostream &out, const DauSach &obj) const override;
-    void saveItems() const override;
+    void writeItem(std::ostream &out, const DauSach &obj) override;
+    void saveItems() override;
+    void loadItems() override;
 
 public:
     DauSachManager();
@@ -32,18 +33,23 @@ public:
                       const std::string &tac_gia, int nam_xuat_ban, const std::string &the_loai);
 
     // Tìm kiếm một đầu sách theo ISBN
-    DauSach* searchRecord(int ISBN) const;
+    DauSach* searchRecord(int ISBN);
+
+    LinearList<DauSach> searchLikeTenSach(const std::string &keyword);
 
     // Lấy tất cả đầu sách
-    LinearList<DauSach> getAllRecords() const;
+    LinearList<DauSach> getAllRecords();
 
 
     // Kiểm tra xem đầu sách có tồn tại không
-    bool isRecordExist(int ISBN) const;
+    bool isRecordExist(int ISBN);
 
     // Thêm một DanhMucSach vào đầu sách
     bool addDanhMucSach(int ISBN, DanhMucSach* danh_muc_sach);
 };
+
+extern DauSachManager dau_sach_mgr;
+
 
 // #include "../../src/repositories/DauSachManager.cpp"
 

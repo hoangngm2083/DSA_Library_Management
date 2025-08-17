@@ -26,9 +26,13 @@ BorrowBookWindow::BorrowBookWindow(QWidget *parent)
 
     // Hàng nút
     auto *btnLayout = new QHBoxLayout;
+    btnReturn = new QPushButton("Trả sách");
+    btnLost = new QPushButton("Làm mất sách");
     btnBorrow = new QPushButton("Mượn sách");
     btnClose = new QPushButton("Đóng");
     btnLayout->addStretch();
+    btnLayout->addWidget(btnLost);
+    btnLayout->addWidget(btnReturn);
     btnLayout->addWidget(btnBorrow);
     btnLayout->addWidget(btnClose);
 
@@ -39,6 +43,8 @@ BorrowBookWindow::BorrowBookWindow(QWidget *parent)
 
     // Kết nối signal-slot
     connect(btnFind, &QPushButton::clicked, this, &BorrowBookWindow::onFindClicked);
+    connect(btnLost, &QPushButton::clicked, this, &BorrowBookWindow::onLostClicked);
+    connect(btnReturn, &QPushButton::clicked, this, &BorrowBookWindow::onReturnClicked);
     connect(btnBorrow, &QPushButton::clicked, this, &BorrowBookWindow::onBorrowClicked);
     connect(btnClose, &QPushButton::clicked, this, &BorrowBookWindow::onCloseClicked);
 }
@@ -57,12 +63,17 @@ void BorrowBookWindow::onFindClicked() {
         return;
     }
 
+    this->cardId = cardId;
+
     // Lấy danh sách mượn/trả từ "DB" (manager)
     auto list = muontra_mgr.searchRecords(cardId);
 
     borrowedBooks.clear();
     list.traverse([&](MuonTra *value) {
-        borrowedBooks.append(*value);   // copy từ con trỏ ra QVector
+        if(value->trang_thai == 0)
+        {
+            borrowedBooks.append(*value);   // copy từ con trỏ ra QVector
+        }
     });
 
     updateBorrowedBooksTable();
@@ -80,8 +91,50 @@ void BorrowBookWindow::onBorrowClicked() {
         return;
     }
 
-    // TODO: thêm logic mượn sách (vd: mở dialog chọn sách)
-    QMessageBox::information(this, "Thành công", "Mượn sách thành công!");
+
+    BorrowDialog dlg(this, this->cardId);
+    dlg.exec();
+}
+
+void BorrowBookWindow::onReturnClicked() {
+    int row = tableBorrowedBooks->currentRow();
+    if (row < 0) {
+        QMessageBox::warning(this, "Lỗi", "Vui lòng chọn một sách để trả!");
+        return;
+    }
+    QString ma_sach = tableBorrowedBooks->item(row, 0)->text();
+    QString ngay_muon = tableBorrowedBooks->item(row, 1)->text();
+    // std::cout << ma_sach.toStdString() << std::endl;
+    // std::cout << ngay_muon.toStdString() << std::endl;
+    QDate currentDate = QDate::currentDate();
+    QString ngay_tra = currentDate.toString("yyyy-MM-dd");
+    int trang_thai = 1;
+
+   if(!muontra_mgr.updateRecord(ma_sach.toStdString(), ngay_muon.toStdString(), ngay_tra.toStdString(), trang_thai))
+   {
+        QMessageBox::warning(this, "Lỗi", "Có lỗi xảy ra!");
+        return;
+   }
+   this->onFindClicked();
+}
+
+void BorrowBookWindow::onLostClicked() {
+    int row = tableBorrowedBooks->currentRow();
+    if (row < 0) {
+        QMessageBox::warning(this, "Lỗi", "Vui lòng chọn một sách để cập nhật làm mất!");
+        return;
+    }
+    QString ma_sach = tableBorrowedBooks->item(row, 0)->text();
+    QString ngay_muon = tableBorrowedBooks->item(row, 1)->text();
+    std::string ngay_tra = "";
+    int trang_thai = 2;
+
+   if(!muontra_mgr.updateRecord(ma_sach.toStdString(), ngay_muon.toStdString(), ngay_tra, trang_thai))
+   {
+        QMessageBox::warning(this, "Lỗi", "Có lỗi xảy ra!");
+        return;
+   }
+   this->onFindClicked();
 }
 
 void BorrowBookWindow::onCloseClicked() {

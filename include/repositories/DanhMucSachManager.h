@@ -15,8 +15,9 @@ private:
     LinkedList<DanhMucSach *> list; // Singly linked list to store DanhMucSach pointers
 
     bool readItem(std::istream &in, DanhMucSach &obj) override;
-    void writeItem(std::ostream &out, const DanhMucSach &obj) const override;
-    void saveItems() const override;
+    void writeItem(std::ostream &out, const DanhMucSach &obj) override;
+    void saveItems() override;
+    void loadItems() override;
 
 public:
     DanhMucSachManager();
@@ -34,14 +35,14 @@ public:
                       const std::string &vi_tri, int ISBN);
 
     // Search for a book record by ma_sach
-    LinkedList<DanhMucSach *> searchRecords(int ISBN) const;
-    DanhMucSach *searchRecord(const std::string &ma_sach) const;
+    LinkedList<DanhMucSach *> searchRecords(int ISBN) ;
+    DanhMucSach *searchRecord(const std::string &ma_sach) ;
 
     // Get all book records
-    LinearList<DanhMucSach> getAllRecords() const;
+    LinearList<DanhMucSach> getAllRecords();
 
     // Check if a book record exists
-    bool isRecordExist(const std::string &ma_sach) const;
+    bool isRecordExist(const std::string &ma_sach);
 };
 
 // #include "../../src/repositories/DanhMucSachManager.cpp"

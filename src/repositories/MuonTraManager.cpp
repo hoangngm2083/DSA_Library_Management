@@ -4,12 +4,7 @@ MuonTraManager muontra_mgr;
 
 MuonTraManager::MuonTraManager() : BaseManager("data/muontra.txt")
 {
-    auto items = this->readFromFile();
-    for (int i = 0; i < items.size(); i++)
-    {
-        MuonTra *itemPtr = new MuonTra(items[i]);
-        list.insertLast(itemPtr);
-    }
+    this->loadItems();
 }
 
 MuonTraManager::~MuonTraManager()
@@ -41,7 +36,7 @@ bool MuonTraManager::readItem(std::istream &in, MuonTra &obj)
     return true;
 }
 
-void MuonTraManager::writeItem(std::ostream &out, const MuonTra &obj) const
+void MuonTraManager::writeItem(std::ostream &out, const MuonTra &obj)
 {
     // Write fields to file
     out << obj.ma_sach << "\n"
@@ -54,6 +49,7 @@ void MuonTraManager::writeItem(std::ostream &out, const MuonTra &obj) const
 bool MuonTraManager::addRecord(const std::string &ma_sach, const std::string &ngay_muon,
                                const std::string &ngay_tra, int trang_thai, int ma_the)
 {
+    this->loadItems();
     // Validate trang_thai
     if (trang_thai < 0 || trang_thai > 2)
     {
@@ -76,6 +72,7 @@ bool MuonTraManager::addRecord(const std::string &ma_sach, const std::string &ng
 
     // Add to linked list
     list.insertLast(newRecord);
+    this->saveItems();
     return true;
 }
 
@@ -88,6 +85,7 @@ bool MuonTraManager::removeRecord(const std::string &ma_sach, const std::string 
         return false; // Hoặc xử lý khác nếu không tìm thấy
     }
     this->list.deleteValue(record); // Chỉ cần truyền con trỏ record
+    this->saveItems();
     return true;                    // Trả về true nếu xóa thành công
 }
 
@@ -108,21 +106,23 @@ bool MuonTraManager::updateRecord(const std::string &ma_sach, const std::string 
     // Update fields
     record->ngay_tra = ngay_tra;
     record->trang_thai = trang_thai;
+    this->saveItems();
     return true;
 }
 
-MuonTra *MuonTraManager::searchRecord(const std::string &ma_sach, const std::string &ngay_muon) const
+MuonTra *MuonTraManager::searchRecord(const std::string &ma_sach, const std::string &ngay_muon)
 {
+    this->loadItems();
     MuonTra temp;
     temp.ma_sach = ma_sach;
     temp.ngay_muon = ngay_muon;
-
     // Sử dụng phương thức search của LinkedList
     return list.search(&temp); // Truyền địa chỉ của temp
 }
 
-LinkedList<MuonTra *> MuonTraManager::searchRecords(int ma_the) const
+LinkedList<MuonTra *> MuonTraManager::searchRecords(int ma_the)
 {
+    this->loadItems();
     LinkedList<MuonTra *> result;
     this->list.traverse([&result, ma_the](MuonTra *value)
                         { 
@@ -133,22 +133,48 @@ LinkedList<MuonTra *> MuonTraManager::searchRecords(int ma_the) const
     return result;
 }
 
-LinearList<MuonTra> MuonTraManager::getAllRecords() const
+LinearList<MuonTra> MuonTraManager::getAllRecords()
 {
+    this->loadItems();
     LinearList<MuonTra> result;
     this->list.traverse([&result](MuonTra *value)
                         { result.push(*value); });
     return result;
 }
 
-bool MuonTraManager::isRecordExist(const std::string &ma_sach, const std::string &ngay_muon) const
+bool MuonTraManager::isRecordExist(const std::string &ma_sach, const std::string &ngay_muon)
 {
     return searchRecord(ma_sach, ngay_muon) != nullptr;
 }
 
-void MuonTraManager::saveItems() const
-{
-    LinearList<MuonTra> items = getAllRecords();
-    this->writeToFile(items);
+bool  MuonTraManager::isBorrowing(const std::string &ma_sach) {
+    this->loadItems();
+    bool isBorrowing = false;
+    this->list.traverse([&isBorrowing, &ma_sach](MuonTra *value) { 
+        if (value->ma_sach == ma_sach && value->trang_thai != 1) {
+            isBorrowing = true;
+        }
+    });
+    return isBorrowing;
 }
+
+void MuonTraManager::saveItems()
+{
+    LinearList<MuonTra> result;
+    this->list.traverse([&result](MuonTra *value)
+                        { result.push(*value); });
+    this->writeToFile(result);
+}
+
+void MuonTraManager::loadItems()
+{
+    list.clear();
+    auto items = this->readFromFile();
+    for (int i = 0; i < items.size(); i++)
+    {
+        MuonTra *itemPtr = new MuonTra(items[i]);
+        list.insertLast(itemPtr);
+    }
+}
+
 

@@ -20,8 +20,9 @@ private:
     // Hàm tạo ID ngẫu nhiên không trùng
     int generateRandomId();
     bool readItem(std::istream &in, TheDocGia &obj) override;
-    void writeItem(std::ostream &out, const TheDocGia &obj) const override;
-    void saveItems() const override;
+    void writeItem(std::ostream &out, const TheDocGia &obj) override;
+    void saveItems() override;
+    void loadItems() override;
 
 public:
     TheDocGiaManager();
@@ -39,12 +40,12 @@ public:
                     int phai, int trang_thai);
 
     // Tìm kiếm thẻ theo mã
-    TheDocGia *searchCard(int maThe) const;
+    TheDocGia *searchCard(int maThe) ;
 
     // Lấy danh sách tất cả thẻ (in-order)
-    LinearList<TheDocGia> getAllCards() const;
+    LinearList<TheDocGia> getAllCards() ;
 
-    bool isIdExist(int maThe) const;
+    bool isIdExist(int maThe) ;
 };
 
 // #include "../../src/repositories/TheDocGiaManager.cpp"

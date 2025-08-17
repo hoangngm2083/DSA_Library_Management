@@ -53,7 +53,7 @@ public:
     }
 
     // Ghi file
-    void writeToFile(const LinearList<T> &items) const
+    void writeToFile(const LinearList<T> &items)
     {
         // std::ofstream fout("data/dausach_testwrite.txt");
         std::ofstream fout(filePath);
@@ -74,8 +74,9 @@ public:
 
 protected:
     virtual bool readItem(std::istream &in, T &obj) = 0;
-    virtual void writeItem(std::ostream &out, const T &obj) const = 0;
-    virtual void saveItems() const = 0;
+    virtual void writeItem(std::ostream &out, const T &obj)=0;
+    virtual void saveItems()=0;
+    virtual void loadItems()=0;
     void trimCR(std::string &s)
     {
         if (!s.empty() && s.back() == '\r')

@@ -1,12 +1,6 @@
 #include "view/MainWindow.h"
-#include "view/BorrowBookWindow.h"   // ví dụ cho f
-#include <QMenuBar>
-#include <QMessageBox>
-#include <QVBoxLayout>
 
-
-
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), borrowWindow(nullptr) {
     setWindowTitle("Library Management");
     resize(800, 600);
     auto *central = new QWidget(this);
@@ -28,7 +22,7 @@ void MainWindow::createMenus() {
 
     QMenu *menuBorrow = menuBar()->addMenu("Mượn/Trả");
     menuBorrow->addAction("Mượn sách", this, &MainWindow::openBorrowBookWindow);
-    menuBorrow->addAction("Trả sách", this, &MainWindow::openReturnBookWindow);
+    // menuBorrow->addAction("Trả sách", this, &MainWindow::openReturnBookWindow);
     menuBorrow->addAction("Danh sách sách độc giả đang mượn", this, &MainWindow::listBorrowedByReader);
     menuBorrow->addAction("Độc giả mượn quá hạn", this, &MainWindow::listOverdueReaders);
     menuBorrow->addAction("Top 10 sách được mượn nhiều", this, &MainWindow::top10BorrowedBooks);
@@ -56,17 +50,17 @@ void MainWindow::searchBookByName() {
     QMessageBox::information(this, "Tìm sách", "Mở màn hình tìm sách theo tên");
 }
 
-
-// Và khi mở màn:
 void MainWindow::openBorrowBookWindow() {
-    auto *w = new BorrowBookWindow(centralWidget());
-    centralWidget()->layout()->addWidget(w);
-    w->show();  // hoặc w->setVisible(true);
+    if (!borrowWindow) {
+        borrowWindow = new BorrowBookWindow(centralWidget());
+        centralWidget()->layout()->addWidget(borrowWindow);
+    }
+    borrowWindow->show();
 }
 
-void MainWindow::openReturnBookWindow() {
-    QMessageBox::information(this, "Trả sách", "Mở màn hình trả sách");
-}
+// void MainWindow::openReturnBookWindow() {
+//     QMessageBox::information(this, "Trả sách", "Mở màn hình trả sách");
+// }
 
 void MainWindow::listBorrowedByReader() {
     QMessageBox::information(this, "Danh sách sách", "Liệt kê sách đang mượn theo thẻ...");

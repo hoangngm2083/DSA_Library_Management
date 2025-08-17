@@ -1,19 +1,49 @@
-3
-123456789
-Introduction to Algorithms
-500
-Thomas H. Cormen
-2009
-Computer Science
-987654321
-The C++ Programming Language
-1040
-Bjarne Stroustrup
-2013
-Programming
-456789123
-Clean Code
-464
-Robert C. Martin
-2008
-Software Engineering
+8
+111111111
+The Lord of the Rings
+1178
+J.R.R. Tolkien
+1954
+Fantasy
+222222222
+Harry Potter and the Philosopher's Stone
+223
+J.K. Rowling
+1997
+Fantasy
+333333333
+The Catcher in the Rye
+234
+J.D. Salinger
+1951
+Fiction
+444444444
+The Da Vinci Code
+689
+Dan Brown
+2003
+Mystery
+555555555
+The Alchemist
+208
+Paulo Coelho
+1988
+Fiction
+666666666
+Thinking, Fast and Slow
+499
+Daniel Kahneman
+2011
+Psychology
+777777777
+Sapiens
+443
+Yuval Noah Harari
+2011
+History
+888888888
+Atomic Habits
+320
+James Clear
+2018
+Self-help

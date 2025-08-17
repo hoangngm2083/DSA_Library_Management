@@ -2,6 +2,12 @@
 
 TheDocGiaManager::TheDocGiaManager() : BaseManager("data/thedocgia.txt")
 {
+    this->loadItems();
+}
+
+void TheDocGiaManager::loadItems()
+{
+    bst.clear();
     auto items = this->readFromFile();
     for (int i = 0; i < items.size(); i++)
     {
@@ -40,7 +46,7 @@ bool TheDocGiaManager::readItem(std::istream &in, TheDocGia &obj)
     return true;
 }
 
-void TheDocGiaManager::writeItem(std::ostream &out, const TheDocGia &obj) const
+void TheDocGiaManager::writeItem(std::ostream &out, const TheDocGia &obj)
 {
 
     // Ghi đúng format nhiều dòng
@@ -69,6 +75,7 @@ int TheDocGiaManager::generateRandomId()
 int TheDocGiaManager::addCard(const std::string &ho, const std::string &ten,
                               int phai, int trang_thai)
 {
+    this->loadItems();
     // Validate giới tính
     if (phai != 0 && phai != 1)
     {
@@ -94,7 +101,7 @@ int TheDocGiaManager::addCard(const std::string &ho, const std::string &ten,
 
     // Thêm vào BST
     this->bst.insert(newCard, newCard->ma_the);
-
+    this->saveItems();
     return ma_the;
 }
 
@@ -106,7 +113,7 @@ bool TheDocGiaManager::removeCard(int maThe)
     }
 
     this->bst.remove(maThe);
-
+    this->saveItems();
     return true;
 }
 
@@ -135,17 +142,18 @@ bool TheDocGiaManager::updateCard(int maThe, const std::string &ho, const std::s
     card->ten = ten;
     card->phai = phai;
     card->trang_thai = trang_thai;
-
+    this->saveItems();
     return true;
 }
 
-TheDocGia *TheDocGiaManager::searchCard(int maThe) const
+TheDocGia *TheDocGiaManager::searchCard(int maThe)
 {
     return this->bst.getData(maThe);
 }
 
-LinearList<TheDocGia> TheDocGiaManager::getAllCards() const
+LinearList<TheDocGia> TheDocGiaManager::getAllCards()
 {
+    this->loadItems();
     LinearList<TheDocGia> result;
 
     this->bst.inOrder([&result](TheDocGia *value)
@@ -171,13 +179,20 @@ LinearList<TheDocGia> TheDocGiaManager::getAllCards() const
 //     return node;
 // }
 
-bool TheDocGiaManager::isIdExist(int maThe) const
+bool TheDocGiaManager::isIdExist(int maThe)
 {
     return this->bst.search(maThe);
 }
 
-void TheDocGiaManager::saveItems() const
+void TheDocGiaManager::saveItems()
 {
-    auto items = this->getAllCards();
-    this->writeToFile(items);
+
+    LinearList<TheDocGia> result;
+
+    this->bst.inOrder([&result](TheDocGia *value)
+                      {
+                          result.push(*value); // copy dữ liệu ra list
+                      });
+
+    this->writeToFile(result);
 };
