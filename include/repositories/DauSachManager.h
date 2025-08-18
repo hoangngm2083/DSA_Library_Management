@@ -6,6 +6,7 @@
 #include "BaseManager.h"
 #include <string>
 #include <stdexcept>
+#include "repositories/IdManager.h"
 
 class DauSachManager : public BaseManager<DauSach>
 {
@@ -22,7 +23,7 @@ public:
     ~DauSachManager();
 
     // Thêm một đầu sách mới (tự động sắp xếp theo ten_sach)
-    bool addRecord(int ISBN, const std::string &ten_sach, int so_trang,
+    int addRecord( const std::string &ten_sach, int so_trang,
                    const std::string &tac_gia, int nam_xuat_ban, const std::string &the_loai);
 
     // Xóa một đầu sách theo ISBN

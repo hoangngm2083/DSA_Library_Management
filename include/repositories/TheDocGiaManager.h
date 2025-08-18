@@ -42,6 +42,8 @@ public:
     // Tìm kiếm thẻ theo mã
     TheDocGia *searchCard(int maThe) ;
 
+    // LinearList<TheDocGia*> searchCards(int maThe[]) ;
+
     // Lấy danh sách tất cả thẻ (in-order)
     LinearList<TheDocGia> getAllCards() ;
 

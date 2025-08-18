@@ -1,6 +1,7 @@
 #pragma once
 #include <QMainWindow>
 #include "view/BorrowBookWindow.h"
+#include "view/ThemDauSachDialog.h"
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QVBoxLayout>
@@ -19,7 +20,7 @@ private slots:
     void searchBookByName();          // e. Tìm thông tin sách theo tên
     void openBorrowBookWindow();      // f. Mượn sách
     // void openReturnBookWindow();      // g. Trả sách
-    void listBorrowedByReader();      // h. Liệt kê sách đang mượn theo thẻ
+    // void listBorrowedByReader();      // h. Liệt kê sách đang mượn theo thẻ
     void listOverdueReaders();        // i. In độc giả quá hạn
     void top10BorrowedBooks();        // j. In 10 sách mượn nhiều nhất
 

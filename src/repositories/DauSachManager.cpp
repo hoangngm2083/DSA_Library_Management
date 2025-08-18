@@ -82,14 +82,16 @@ void DauSachManager::writeItem(std::ostream &out, const DauSach &obj)
         << obj.the_loai << "\n";
 }
 
-bool DauSachManager::addRecord(int ISBN, const std::string &ten_sach, int so_trang,
+int DauSachManager::addRecord( const std::string &ten_sach, int so_trang,
                                const std::string &tac_gia, int nam_xuat_ban, const std::string &the_loai)
 {
     this->loadItems();
-    if (isRecordExist(ISBN))
+    int ISBN = id_mgr.next();
+    while(isRecordExist(ISBN))
     {
-        return false;
+        ISBN = id_mgr.next();
     }
+
     if (list.size() >= 10000)
     {
         throw std::runtime_error("Danh sách đầu sách đã đạt tối đa 10,000!");
@@ -103,25 +105,19 @@ bool DauSachManager::addRecord(int ISBN, const std::string &ten_sach, int so_tra
     newRecord->nam_xuat_ban = nam_xuat_ban;
     newRecord->the_loai = the_loai;
     newRecord->dms = nullptr; // Khởi tạo dms là nullptr
-
-    if (list.isEmpty())
-    {
-        list.push(newRecord);
-    }
-    else
-    {
-        for (int i = 0; i < list.size(); i++)
-        {
-            if (*newRecord < *list[i]) // So sánh qua con trỏ
-            {
-                list.insert(i, newRecord);
-                return true;
-            }
+    // . Danh sách đầu sách luôn tăng dần theo tên sách
+    for (int i = 0; i < list.size(); i++) {
+        if (newRecord->ten_sach < list[i]->ten_sach) {
+            list.insert(i, newRecord);
+            this->saveItems();
+            return ISBN;
         }
-        list.push(newRecord);
     }
+
+    // Nếu không tìm được vị trí phù hợp -> chèn cuối
+    list.push(newRecord);
     this->saveItems();
-    return true;
+    return ISBN;
 }
 
 bool DauSachManager::removeRecord(int ISBN)
