@@ -2,7 +2,7 @@
 #include "repositories/DanhMucSachManager.h"
 
 // Copy constructor: tạo bản sao node (deep-copy nodes) nhưng không copy ownership của DanhMucSach*
-DauSach::DauSach(const DauSach& other)
+DauSach::DauSach(const DauSach &other)
     : ISBN(other.ISBN),
       ten_sach(other.ten_sach),
       so_trang(other.so_trang),
@@ -11,15 +11,17 @@ DauSach::DauSach(const DauSach& other)
       the_loai(other.the_loai),
       dms(nullptr)
 {
-    if (other.dms) {
+    if (other.dms)
+    {
         // LinkedList copy ctor sẽ tạo node mới; data (DanhMucSach*) được shallow-copy (ok)
-        dms = new LinkedList<DanhMucSach*>( *other.dms );
+        dms = new LinkedList<DanhMucSach *>(*other.dms);
     }
 }
 
-DauSach& DauSach::operator=(const DauSach& other)
+DauSach &DauSach::operator=(const DauSach &other)
 {
-    if (this != &other) {
+    if (this != &other)
+    {
         ISBN = other.ISBN;
         ten_sach = other.ten_sach;
         so_trang = other.so_trang;
@@ -28,19 +30,21 @@ DauSach& DauSach::operator=(const DauSach& other)
         the_loai = other.the_loai;
 
         // Xóa dms cũ (chỉ node), sau đó sao chép dms mới (nếu có)
-        if (dms) {
+        if (dms)
+        {
             delete dms;
             dms = nullptr;
         }
-        if (other.dms) {
-            dms = new LinkedList<DanhMucSach*>( *other.dms );
+        if (other.dms)
+        {
+            dms = new LinkedList<DanhMucSach *>(*other.dms);
         }
     }
     return *this;
 }
 
 // Move constructor: chuyển ownership của con trỏ dms
-DauSach::DauSach(DauSach&& other) noexcept
+DauSach::DauSach(DauSach &&other) noexcept
     : ISBN(other.ISBN),
       ten_sach(std::move(other.ten_sach)),
       so_trang(other.so_trang),
@@ -53,10 +57,15 @@ DauSach::DauSach(DauSach&& other) noexcept
 }
 
 // Move assignment
-DauSach& DauSach::operator=(DauSach&& other) noexcept
+DauSach &DauSach::operator=(DauSach &&other) noexcept
 {
-    if (this != &other) {
-        if (dms) { delete dms; dms = nullptr; }
+    if (this != &other)
+    {
+        if (dms)
+        {
+            delete dms;
+            dms = nullptr;
+        }
 
         ISBN = other.ISBN;
         ten_sach = std::move(other.ten_sach);
@@ -80,10 +89,10 @@ void DauSach::loadDanhMucSach()
         dms = nullptr;
     }
 
-    DanhMucSachManager danh_muc_sach;
     // nếu searchRecords trả về LinkedList<T> by value:
-    LinkedList<DanhMucSach*> tmp = danh_muc_sach.searchRecords(this->ISBN);
-    if (!tmp.isEmpty()) {
-        dms = new LinkedList<DanhMucSach*>( std::move(tmp) ); // move vào heap
+    LinkedList<DanhMucSach *> tmp = dms_mgr.searchRecords(this->ISBN);
+    if (!tmp.isEmpty())
+    {
+        dms = new LinkedList<DanhMucSach *>(std::move(tmp)); // move vào heap
     }
 }

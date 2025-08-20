@@ -12,10 +12,10 @@
 #include "models/DauSach.h"
 #include "models/DanhMucSach.h"
 #include "repositories/MuonTraManager.h"
-#include <QDate> 
+#include <QDate>
 
-
-class BorrowDialog : public QDialog {
+class BorrowDialog : public QDialog
+{
     Q_OBJECT
 public:
     explicit BorrowDialog(QWidget *parent = nullptr, int cardId = -1);

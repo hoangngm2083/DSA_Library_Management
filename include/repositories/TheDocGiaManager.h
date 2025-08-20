@@ -40,16 +40,18 @@ public:
                     int phai, int trang_thai);
 
     // Tìm kiếm thẻ theo mã
-    TheDocGia *searchCard(int maThe) ;
+    TheDocGia *searchCard(int maThe);
 
     // LinearList<TheDocGia*> searchCards(int maThe[]) ;
 
     // Lấy danh sách tất cả thẻ (in-order)
-    LinearList<TheDocGia> getAllCards() ;
+    LinearList<TheDocGia> getAllCards();
 
-    bool isIdExist(int maThe) ;
+    bool isIdExist(int maThe);
 };
 
 // #include "../../src/repositories/TheDocGiaManager.cpp"
+
+extern TheDocGiaManager tdg_mgr;
 
 #endif // THE_DOC_GIA_MANAGER_H

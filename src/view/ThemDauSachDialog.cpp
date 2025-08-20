@@ -1,6 +1,4 @@
-#include "ThemDauSachDialog.h"
-#include <QIntValidator>
-#include <QRegularExpressionValidator>
+#include "view/ThemDauSachDialog.h"
 
 ThemDauSachDialog::ThemDauSachDialog(QWidget *parent)
     : QDialog(parent)
@@ -52,78 +50,69 @@ ThemDauSachDialog::ThemDauSachDialog(QWidget *parent)
     connect(btnClose, &QPushButton::clicked, this, &ThemDauSachDialog::onCloseClicked);
 }
 
-void ThemDauSachDialog::onAddClicked() {
+void ThemDauSachDialog::onAddClicked()
+{
     // kiểm tra tính hợp lệ của dữ liệu nhập vào khi bạn chuyển đổi QString sang int.
     bool ok;
-    // Lấy dữ liệu từ các trường
-    // int ISBN = lineEditISBN->text().toInt(&ok);
-    // if (!ok || ISBN <= 0) {
-    //     QMessageBox::warning(this, "Lỗi", "ISBN phải là số nguyên dương!");
-    //     return;
-    // }
     QString tenSach = lineEditTenSach->text().trimmed();
-    if (tenSach.isEmpty()) {
+    if (tenSach.isEmpty())
+    {
         QMessageBox::warning(this, "Lỗi", "Tên sách không được để trống!");
         return;
     }
     int soTrang = lineEditSoTrang->text().toInt(&ok);
-    if (!ok || soTrang <= 0) {
+    if (!ok || soTrang <= 0)
+    {
         QMessageBox::warning(this, "Lỗi", "Số trang phải là số nguyên dương!");
         return;
     }
     QString tacGia = lineEditTacGia->text().trimmed();
-    if (tacGia.isEmpty()) {
+    if (tacGia.isEmpty())
+    {
         QMessageBox::warning(this, "Lỗi", "Tác giả không được để trống!");
         return;
     }
     int namXuatBan = lineEditNamXuatBan->text().toInt(&ok);
-    if (!ok || namXuatBan < 1000 || namXuatBan > 9999) {
+    if (!ok || namXuatBan < 1000 || namXuatBan > 9999)
+    {
         QMessageBox::warning(this, "Lỗi", "Năm xuất bản phải là số từ 1000 đến 9999!");
         return;
     }
     QString theLoai = lineEditTheLoai->text().trimmed();
-    if (theLoai.isEmpty()) {
+    if (theLoai.isEmpty())
+    {
         QMessageBox::warning(this, "Lỗi", "Thể loại không được để trống!");
         return;
     }
 
-    try {
+    try
+    {
         // Thêm đầu sách vào DauSachManager
         int ISBN = dau_sach_mgr.addRecord(
             tenSach.toStdString(),
             soTrang,
             tacGia.toStdString(),
             namXuatBan,
-            theLoai.toStdString()
-        );
-
-        // // Tạo mã sách tự động (ISBN-001)
-        // std::string maSach = generateMaSach(ISBN, 1);
-        // DanhMucSach* danhMucSach = new DanhMucSach();
-        // danhMucSach->ma_sach = maSach;
-        // danhMucSach->trang_thai = 0; // Sách có thể mượn
-
-        // // Thêm DanhMucSach vào DauSach
-        // if (!dau_sach_mgr.addDanhMucSach(ISBN, danhMucSach)) {
-        //     QMessageBox::warning(this, "Lỗi", "Không thể thêm mã sách vào danh mục!");
-        //     return;
-        // }
+            theLoai.toStdString());
 
         QMessageBox::information(
             this,
             "Thành công",
-            QString("Đã thêm đầu sách: %1\nISBN: %2").arg(tenSach).arg(QString::number(ISBN))
-        );
+            QString("Đã thêm đầu sách: %1\nISBN: %2").arg(tenSach).arg(QString::number(ISBN)));
+
+        this->ISBN = ISBN;
         accept(); // Đóng dialog sau khi thêm thành công
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception &e)
+    {
         QMessageBox::critical(
             this,
             "Lỗi hệ thống",
-            QString("Lỗi khi thêm đầu sách: %1").arg(e.what())
-        );
+            QString("Lỗi khi thêm đầu sách: %1").arg(e.what()));
     }
 }
 
-void ThemDauSachDialog::onCloseClicked() {
+void ThemDauSachDialog::onCloseClicked()
+{
     reject();
 }

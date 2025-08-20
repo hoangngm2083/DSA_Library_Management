@@ -9,11 +9,15 @@
 #include "repositories/DauSachManager.h"
 #include "models/DauSach.h"
 #include "models/DanhMucSach.h"
+#include <QIntValidator>
+#include <QRegularExpressionValidator>
 
-class ThemDauSachDialog : public QDialog {
+class ThemDauSachDialog : public QDialog
+{
     Q_OBJECT
 public:
     explicit ThemDauSachDialog(QWidget *parent = nullptr);
+    int getISBN() const { return ISBN; }
 
 private slots:
     void onAddClicked();
@@ -28,5 +32,5 @@ private:
     QLineEdit *lineEditTheLoai;
     QPushButton *btnAdd;
     QPushButton *btnClose;
-
+    int ISBN;
 };

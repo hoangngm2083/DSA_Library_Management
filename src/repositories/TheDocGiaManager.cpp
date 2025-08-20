@@ -1,5 +1,7 @@
 #include "repositories/TheDocGiaManager.h"
 
+TheDocGiaManager tdg_mgr;
+
 TheDocGiaManager::TheDocGiaManager() : BaseManager("data/thedocgia.txt")
 {
     this->loadItems();
@@ -148,6 +150,7 @@ bool TheDocGiaManager::updateCard(int maThe, const std::string &ho, const std::s
 
 TheDocGia *TheDocGiaManager::searchCard(int maThe)
 {
+    this->loadItems();
     return this->bst.getData(maThe);
 }
 
@@ -181,6 +184,7 @@ LinearList<TheDocGia> TheDocGiaManager::getAllCards()
 
 bool TheDocGiaManager::isIdExist(int maThe)
 {
+    this->loadItems();
     return this->bst.search(maThe);
 }
 

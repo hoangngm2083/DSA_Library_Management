@@ -12,12 +12,13 @@
 #include <QMessageBox>
 #include <QHeaderView>
 #include "repositories/MuonTraManager.h"
+#include "repositories/TheDocGiaManager.h"
 #include "models/MuonTra.h"
 #include "view/BorrowDialog.h"
 #include <string>
 
-
-class BorrowBookWindow : public QWidget {
+class BorrowBookWindow : public QWidget
+{
     Q_OBJECT
 public:
     explicit BorrowBookWindow(QWidget *parent = nullptr);
@@ -40,7 +41,7 @@ private:
     QPushButton *btnClose;
 
     QVector<MuonTra> borrowedBooks;
-    int cardId;
+    int cardId = -1;
 
     void updateBorrowedBooksTable();
     bool hasOverdueBooks() const;

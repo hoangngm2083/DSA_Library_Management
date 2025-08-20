@@ -2,7 +2,6 @@
 
 DauSachManager dau_sach_mgr;
 
-
 DauSachManager::DauSachManager() : BaseManager("data/dausach.txt")
 {
     this->loadItems();
@@ -14,7 +13,7 @@ void DauSachManager::loadItems()
     auto items = this->readFromFile();
     for (int i = 0; i < items.size(); i++)
     {
-        DauSach* newItem = new DauSach(items[i]); // Sao chép và cấp phát mới
+        DauSach *newItem = new DauSach(items[i]); // Sao chép và cấp phát mới
         list.push(newItem);
     }
     for (int i = 0; i < list.size() - 1; i++)
@@ -23,7 +22,7 @@ void DauSachManager::loadItems()
         {
             if (*list[j] < *list[i]) // So sánh qua con trỏ
             {
-                DauSach* temp = list[i];
+                DauSach *temp = list[i];
                 list[i] = list[j];
                 list[j] = temp;
             }
@@ -82,12 +81,12 @@ void DauSachManager::writeItem(std::ostream &out, const DauSach &obj)
         << obj.the_loai << "\n";
 }
 
-int DauSachManager::addRecord( const std::string &ten_sach, int so_trang,
-                               const std::string &tac_gia, int nam_xuat_ban, const std::string &the_loai)
+int DauSachManager::addRecord(const std::string &ten_sach, int so_trang,
+                              const std::string &tac_gia, int nam_xuat_ban, const std::string &the_loai)
 {
     this->loadItems();
     int ISBN = id_mgr.next();
-    while(isRecordExist(ISBN))
+    while (isRecordExist(ISBN))
     {
         ISBN = id_mgr.next();
     }
@@ -97,7 +96,7 @@ int DauSachManager::addRecord( const std::string &ten_sach, int so_trang,
         throw std::runtime_error("Danh sách đầu sách đã đạt tối đa 10,000!");
     }
 
-    DauSach* newRecord = new DauSach(); // Cấp phát mới
+    DauSach *newRecord = new DauSach(); // Cấp phát mới
     newRecord->ISBN = ISBN;
     newRecord->ten_sach = ten_sach;
     newRecord->so_trang = so_trang;
@@ -106,8 +105,10 @@ int DauSachManager::addRecord( const std::string &ten_sach, int so_trang,
     newRecord->the_loai = the_loai;
     newRecord->dms = nullptr; // Khởi tạo dms là nullptr
     // . Danh sách đầu sách luôn tăng dần theo tên sách
-    for (int i = 0; i < list.size(); i++) {
-        if (newRecord->ten_sach < list[i]->ten_sach) {
+    for (int i = 0; i < list.size(); i++)
+    {
+        if (newRecord->ten_sach < list[i]->ten_sach)
+        {
             list.insert(i, newRecord);
             this->saveItems();
             return ISBN;
@@ -133,9 +134,9 @@ bool DauSachManager::removeRecord(int ISBN)
                 list[i]->dms->clear();
                 delete list[i]->dms;
             }
-            delete list[i]; // Giải phóng bộ nhớ của DauSach
+            delete list[i];             // Giải phóng bộ nhớ của DauSach
             bool flag = list.remove(i); // Xóa con trỏ khỏi list
-            if(flag)
+            if (flag)
             {
                 this->saveItems();
             }
@@ -147,14 +148,14 @@ bool DauSachManager::removeRecord(int ISBN)
 }
 
 bool DauSachManager::updateRecord(int ISBN, const std::string &ten_sach, int so_trang,
-                                 const std::string &tac_gia, int nam_xuat_ban, const std::string &the_loai)
+                                  const std::string &tac_gia, int nam_xuat_ban, const std::string &the_loai)
 {
     this->loadItems();
     for (int i = 0; i < list.size(); i++)
     {
         if (list[i]->ISBN == ISBN) // Sử dụng -> vì là con trỏ
         {
-            LinkedList<DanhMucSach*>* old_dms = list[i]->dms; // Lưu lại dms
+            LinkedList<DanhMucSach *> *old_dms = list[i]->dms; // Lưu lại dms
             list[i]->ten_sach = ten_sach;
             list[i]->so_trang = so_trang;
             list[i]->tac_gia = tac_gia;
@@ -162,7 +163,7 @@ bool DauSachManager::updateRecord(int ISBN, const std::string &ten_sach, int so_
             list[i]->the_loai = the_loai;
             list[i]->dms = old_dms; // Giữ nguyên dms
 
-            DauSach* temp = list[i];
+            DauSach *temp = list[i];
             list.remove(i);
             for (int j = 0; j < list.size(); j++)
             {
@@ -180,7 +181,7 @@ bool DauSachManager::updateRecord(int ISBN, const std::string &ten_sach, int so_
     return false;
 }
 
-DauSach* DauSachManager::searchRecord(int ISBN)
+DauSach *DauSachManager::searchRecord(int ISBN)
 {
     this->loadItems();
     for (int i = 0; i < list.size(); i++)
@@ -194,24 +195,29 @@ DauSach* DauSachManager::searchRecord(int ISBN)
 }
 
 // Hàm phụ để chuyển chuỗi về lowercase
-static std::string toLower(const std::string &s) {
+static std::string toLower(const std::string &s)
+{
     std::string result;
     result.reserve(s.size());
-    for (unsigned char c : s) {
+    for (unsigned char c : s)
+    {
         result.push_back(std::tolower(c));
     }
     return result;
 }
 
 // Tìm tất cả sách có tên chứa keyword (LIKE %keyword%)
-LinearList<DauSach> DauSachManager::searchLikeTenSach(const std::string &keyword) {
+LinearList<DauSach> DauSachManager::searchLikeTenSach(const std::string &keyword)
+{
     this->loadItems();
     LinearList<DauSach> result;
     std::string keyLower = toLower(keyword);
 
-    for (int i = 0; i < list.size(); i++) {
+    for (int i = 0; i < list.size(); i++)
+    {
         std::string tenLower = toLower(list[i]->ten_sach);
-        if (tenLower.find(keyLower) != std::string::npos) { // std::string::npos là một hằng số đặc biệt của std::string dùng để biểu thị "không tìm thấy".
+        if (tenLower.find(keyLower) != std::string::npos)
+        {                          // std::string::npos là một hằng số đặc biệt của std::string dùng để biểu thị "không tìm thấy".
             result.push(*list[i]); // trả về danh sách các kết quả khớp
         }
     }
@@ -233,15 +239,14 @@ LinearList<DauSach> DauSachManager::getAllRecords()
     return result;
 }
 
-
 bool DauSachManager::isRecordExist(int ISBN)
 {
     return searchRecord(ISBN) != nullptr;
 }
 
-bool DauSachManager::addDanhMucSach(int ISBN, DanhMucSach* danh_muc_sach)
+bool DauSachManager::addDanhMucSach(int ISBN, DanhMucSach *danh_muc_sach)
 {
-    DauSach* record = searchRecord(ISBN);
+    DauSach *record = searchRecord(ISBN);
     if (!record)
     {
         return false;
@@ -249,7 +254,7 @@ bool DauSachManager::addDanhMucSach(int ISBN, DanhMucSach* danh_muc_sach)
     // Kiểm tra và cấp phát dms nếu chưa có
     if (record->dms == nullptr)
     {
-        record->dms = new LinkedList<DanhMucSach*>();
+        record->dms = new LinkedList<DanhMucSach *>();
     }
     record->dms->insertLast(danh_muc_sach);
     return true;

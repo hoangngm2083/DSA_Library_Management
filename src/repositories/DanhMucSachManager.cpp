@@ -1,8 +1,10 @@
 #include "repositories/DanhMucSachManager.h"
 
+DanhMucSachManager dms_mgr;
+
 DanhMucSachManager::DanhMucSachManager() : BaseManager("data/danhmucsach.txt")
 {
-   this->loadItems();
+    this->loadItems();
 }
 
 void DanhMucSachManager::loadItems()
@@ -50,21 +52,17 @@ void DanhMucSachManager::writeItem(std::ostream &out, const DanhMucSach &obj)
         << obj.ISBN << "\n";
 }
 
-bool DanhMucSachManager::addRecord(const std::string &ma_sach, int trang_thai,
-                                    const std::string &vi_tri, int ISBN)
+std::string DanhMucSachManager::addRecord(int trang_thai, const std::string &vi_tri, int ISBN)
 {
-     this->loadItems();
+    this->loadItems();
     // Validate trang_thai
     if (trang_thai < 0 || trang_thai > 2)
     {
         throw std::invalid_argument("Trạng thái chỉ nhận giá trị 0 (có sẵn), 1 (đã mượn), hoặc 2 (thanh lý)");
     }
 
-    // Check if record already exists
-    if (isRecordExist(ma_sach))
-    {
-        return false;
-    }
+    LinkedList<DanhMucSach *> tmp = dms_mgr.searchRecords(ISBN);
+    std::string ma_sach = std::to_string(ISBN) + "_" + std::to_string(tmp.getSize() + 1);
 
     // Create new book record
     DanhMucSach *newRecord = new DanhMucSach{
@@ -75,7 +73,8 @@ bool DanhMucSachManager::addRecord(const std::string &ma_sach, int trang_thai,
 
     // Add to linked list
     list.insertLast(newRecord);
-    return true;
+    this->saveItems();
+    return ma_sach;
 }
 
 bool DanhMucSachManager::removeRecord(const std::string &ma_sach)
@@ -91,7 +90,7 @@ bool DanhMucSachManager::removeRecord(const std::string &ma_sach)
 }
 
 bool DanhMucSachManager::updateRecord(const std::string &ma_sach, int trang_thai,
-                                       const std::string &vi_tri, int ISBN)
+                                      const std::string &vi_tri, int ISBN)
 {
     DanhMucSach *record = searchRecord(ma_sach);
     if (!record)
@@ -112,8 +111,9 @@ bool DanhMucSachManager::updateRecord(const std::string &ma_sach, int trang_thai
     return true;
 }
 
- LinkedList<DanhMucSach *> DanhMucSachManager::searchRecords(int ISBN){
-     this->loadItems();
+LinkedList<DanhMucSach *> DanhMucSachManager::searchRecords(int ISBN)
+{
+    this->loadItems();
     LinkedList<DanhMucSach *> result;
     this->list.traverse([&result, ISBN](DanhMucSach *value)
                         { 
@@ -122,7 +122,7 @@ bool DanhMucSachManager::updateRecord(const std::string &ma_sach, int trang_thai
                                 result.insertLast(value);
                             } });
     return result;
- };
+};
 
 DanhMucSach *DanhMucSachManager::searchRecord(const std::string &ma_sach)
 {

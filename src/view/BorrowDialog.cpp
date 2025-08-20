@@ -20,10 +20,8 @@ BorrowDialog::BorrowDialog(QWidget *parent, int cardId)
     // Bảng kết quả
     tableResults = new QTableWidget(this);
     tableResults->setColumnCount(7);
-    tableResults->setHorizontalHeaderLabels({
-        "ISBN", "Tên sách", "Số trang", "Tác giả",
-        "Năm XB", "Thể loại", "Mã sách (trong DMS)"
-    });
+    tableResults->setHorizontalHeaderLabels({"ISBN", "Tên sách", "Số trang", "Tác giả",
+                                             "Năm XB", "Thể loại", "Mã sách (trong DMS)"});
     tableResults->horizontalHeader()->setStretchLastSection(true);
     tableResults->setSelectionBehavior(QAbstractItemView::SelectRows);
 
@@ -66,27 +64,32 @@ BorrowDialog::BorrowDialog(QWidget *parent, int cardId)
 //     }
 // }
 
-void BorrowDialog::onSearchClicked() {
+void BorrowDialog::onSearchClicked()
+{
     QString keyword = lineEditSearch->text().trimmed();
-    if (keyword.isEmpty()) {
+    if (keyword.isEmpty())
+    {
         QMessageBox::warning(this, "Lỗi", "Vui lòng nhập từ khóa tìm kiếm!");
         return;
     }
 
     auto results = dau_sach_mgr.searchLikeTenSach(keyword.toStdString());
 
-    if (results.size() == 0) {
+    if (results.size() == 0)
+    {
         QMessageBox::information(this, "Thông báo", "Không tìm thấy sách phù hợp!");
     }
     tableResults->setRowCount(0); // Clear bảng cũ
 
-    for (int i = 0; i < results.size(); ++i) {
+    for (int i = 0; i < results.size(); ++i)
+    {
         DauSach ds = results[i];
         ds.loadDanhMucSach();
-
-        if (ds.dms != nullptr) {
+        if (ds.dms != nullptr)
+        {
             // Duyệt một lần để vừa lọc vừa hiển thị
-            ds.dms->traverse([&](DanhMucSach* dmsItem) {
+            ds.dms->traverse([&](DanhMucSach *dmsItem)
+                             {
                 if (!muontra_mgr.isBorrowing(dmsItem->ma_sach)) {
                     int row = tableResults->rowCount();
                     tableResults->insertRow(row);
@@ -97,17 +100,16 @@ void BorrowDialog::onSearchClicked() {
                     tableResults->setItem(row, 4, new QTableWidgetItem(QString::number(ds.nam_xuat_ban)));
                     tableResults->setItem(row, 5, new QTableWidgetItem(QString::fromStdString(ds.the_loai)));
                     tableResults->setItem(row, 6, new QTableWidgetItem(QString::fromStdString(dmsItem->ma_sach)));
-                }
-            });
+                } });
         }
     }
 }
 
-
-
-void BorrowDialog::onBorrowClicked() {
+void BorrowDialog::onBorrowClicked()
+{
     int row = tableResults->currentRow();
-    if (row < 0) {
+    if (row < 0)
+    {
         QMessageBox::warning(this, "Lỗi", "Vui lòng chọn một sách để mượn!");
         return;
     }
@@ -118,35 +120,37 @@ void BorrowDialog::onBorrowClicked() {
     QDate currentDate = QDate::currentDate();
     QString ngayMuon = currentDate.toString("yyyy-MM-dd");
 
-    try {
+    try
+    {
         // Gọi addRecord: trang_thai = 0 (đang mượn), ngay_tra = "" (chưa trả)
         bool success = muontra_mgr.addRecord(
             maSach.toStdString(),
             ngayMuon.toStdString(),
             "", // Ngày trả để trống (chưa trả)
-            0,   // Trạng thái = 0 (đang mượn)
-            this->cardId
-        );
+            0,  // Trạng thái = 0 (đang mượn)
+            this->cardId);
 
-        if (success) {
+        if (success)
+        {
             QMessageBox::information(
-                this, 
-                "Thành công", 
-                QString("Thẻ %1 đã mượn sách có mã: %2").arg(this->cardId).arg(maSach)
-            );
+                this,
+                "Thành công",
+                QString("Thẻ %1 đã mượn sách có mã: %2").arg(this->cardId).arg(maSach));
             accept(); // Đóng dialog sau khi mượn thành công
-        } else {
-            QMessageBox::warning(
-                this, 
-                "Lỗi", 
-                "Không thể thêm bản ghi mượn sách (có thể sách đã được mượn trước đó)."
-            );
         }
-    } catch (const std::exception &e) {
+        else
+        {
+            QMessageBox::warning(
+                this,
+                "Lỗi",
+                "Không thể thêm bản ghi mượn sách (có thể sách đã được mượn trước đó).");
+        }
+    }
+    catch (const std::exception &e)
+    {
         QMessageBox::critical(
-            this, 
-            "Lỗi hệ thống", 
-            QString("Lỗi khi thêm bản ghi mượn sách: %1").arg(e.what())
-        );
+            this,
+            "Lỗi hệ thống",
+            QString("Lỗi khi thêm bản ghi mượn sách: %1").arg(e.what()));
     }
 }

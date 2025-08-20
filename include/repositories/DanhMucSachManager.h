@@ -24,8 +24,8 @@ public:
     ~DanhMucSachManager();
 
     // Add a new book record
-    bool addRecord(const std::string &ma_sach, int trang_thai,
-                   const std::string &vi_tri, int ISBN);
+    std::string addRecord(int trang_thai,
+                          const std::string &vi_tri, int ISBN);
 
     // Remove a book record by ma_sach
     bool removeRecord(const std::string &ma_sach);
@@ -35,8 +35,8 @@ public:
                       const std::string &vi_tri, int ISBN);
 
     // Search for a book record by ma_sach
-    LinkedList<DanhMucSach *> searchRecords(int ISBN) ;
-    DanhMucSach *searchRecord(const std::string &ma_sach) ;
+    LinkedList<DanhMucSach *> searchRecords(int ISBN);
+    DanhMucSach *searchRecord(const std::string &ma_sach);
 
     // Get all book records
     LinearList<DanhMucSach> getAllRecords();
@@ -45,6 +45,7 @@ public:
     bool isRecordExist(const std::string &ma_sach);
 };
 
+extern DanhMucSachManager dms_mgr;
 // #include "../../src/repositories/DanhMucSachManager.cpp"
 
 #endif // DANH_MUC_SACH_MANAGER_H

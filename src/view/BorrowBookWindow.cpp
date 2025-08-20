@@ -49,17 +49,27 @@ BorrowBookWindow::BorrowBookWindow(QWidget *parent)
     connect(btnClose, &QPushButton::clicked, this, &BorrowBookWindow::onCloseClicked);
 }
 
-void BorrowBookWindow::onFindClicked() {
+void BorrowBookWindow::onFindClicked()
+{
+    this->cardId = -1;
     QString cardIdStr = lineEditCardId->text().trimmed();
-    if (cardIdStr.isEmpty()) {
+    if (cardIdStr.isEmpty())
+    {
         QMessageBox::warning(this, "Lỗi", "Vui lòng nhập mã thẻ độc giả!");
         return;
     }
 
     bool ok;
     int cardId = cardIdStr.toInt(&ok);
-    if (!ok) {
+    if (!ok)
+    {
         QMessageBox::warning(this, "Lỗi", "Mã thẻ độc giả phải là số nguyên hợp lệ!");
+        return;
+    }
+
+    if (!tdg_mgr.isIdExist(cardId))
+    {
+        QMessageBox::warning(this, "Lỗi", "Mã thẻ độc giả không tồn tại!");
         return;
     }
 
@@ -69,36 +79,50 @@ void BorrowBookWindow::onFindClicked() {
     auto list = muontra_mgr.searchRecords(cardId);
 
     borrowedBooks.clear();
-    list.traverse([&](MuonTra *value) {
+    list.traverse([&](MuonTra *value)
+                  {
         if(value->trang_thai == 0)
         {
             borrowedBooks.append(*value);   // copy từ con trỏ ra QVector
-        }
-    });
+        } });
 
     updateBorrowedBooksTable();
 }
 
-void BorrowBookWindow::onBorrowClicked() {
-    if (borrowedBooks.size() >= 3) {
+void BorrowBookWindow::onBorrowClicked()
+{
+    if (this->cardId < 0)
+    {
+        QMessageBox::warning(this, "Lỗi", "Vui lòng nhập mã thẻ hợp lệ!");
+        return;
+    }
+    if (borrowedBooks.size() >= 3)
+    {
         QMessageBox::warning(this, "Không thể mượn",
                              "Độc giả đã mượn tối đa 3 cuốn sách!");
         return;
     }
-    if (hasOverdueBooks()) {
+    if (hasOverdueBooks())
+    {
         QMessageBox::warning(this, "Không thể mượn",
                              "Độc giả có sách quá hạn (7 ngày)!");
         return;
     }
 
-
     BorrowDialog dlg(this, this->cardId);
     dlg.exec();
 }
 
-void BorrowBookWindow::onReturnClicked() {
+void BorrowBookWindow::onReturnClicked()
+{
+    if (this->cardId < 0)
+    {
+        QMessageBox::warning(this, "Lỗi", "Vui lòng nhập mã thẻ hợp lệ!");
+        return;
+    }
     int row = tableBorrowedBooks->currentRow();
-    if (row < 0) {
+    if (row < 0)
+    {
         QMessageBox::warning(this, "Lỗi", "Vui lòng chọn một sách để trả!");
         return;
     }
@@ -110,17 +134,24 @@ void BorrowBookWindow::onReturnClicked() {
     QString ngay_tra = currentDate.toString("yyyy-MM-dd");
     int trang_thai = 1;
 
-   if(!muontra_mgr.updateRecord(ma_sach.toStdString(), ngay_muon.toStdString(), ngay_tra.toStdString(), trang_thai))
-   {
+    if (!muontra_mgr.updateRecord(ma_sach.toStdString(), ngay_muon.toStdString(), ngay_tra.toStdString(), trang_thai))
+    {
         QMessageBox::warning(this, "Lỗi", "Có lỗi xảy ra!");
         return;
-   }
-   this->onFindClicked();
+    }
+    this->onFindClicked();
 }
 
-void BorrowBookWindow::onLostClicked() {
+void BorrowBookWindow::onLostClicked()
+{
+    if (this->cardId < 0)
+    {
+        QMessageBox::warning(this, "Lỗi", "Vui lòng nhập mã thẻ hợp lệ!");
+        return;
+    }
     int row = tableBorrowedBooks->currentRow();
-    if (row < 0) {
+    if (row < 0)
+    {
         QMessageBox::warning(this, "Lỗi", "Vui lòng chọn một sách để cập nhật làm mất!");
         return;
     }
@@ -129,61 +160,77 @@ void BorrowBookWindow::onLostClicked() {
     std::string ngay_tra = "";
     int trang_thai = 2;
 
-   if(!muontra_mgr.updateRecord(ma_sach.toStdString(), ngay_muon.toStdString(), ngay_tra, trang_thai))
-   {
+    if (!muontra_mgr.updateRecord(ma_sach.toStdString(), ngay_muon.toStdString(), ngay_tra, trang_thai))
+    {
         QMessageBox::warning(this, "Lỗi", "Có lỗi xảy ra!");
         return;
-   }
-   this->onFindClicked();
+    }
+    this->onFindClicked();
 }
 
-void BorrowBookWindow::onCloseClicked() {
+void BorrowBookWindow::onCloseClicked()
+{
     close();
 }
 
-void BorrowBookWindow::updateBorrowedBooksTable() {
+void BorrowBookWindow::updateBorrowedBooksTable()
+{
     tableBorrowedBooks->setRowCount(borrowedBooks.size());
 
-    for (int i = 0; i < borrowedBooks.size(); ++i) {
+    for (int i = 0; i < borrowedBooks.size(); ++i)
+    {
         const MuonTra &mt = borrowedBooks[i];
 
         // Cột 0: Mã sách
         tableBorrowedBooks->setItem(i, 0,
-            new QTableWidgetItem(QString::fromStdString(mt.ma_sach)));
+                                    new QTableWidgetItem(QString::fromStdString(mt.ma_sach)));
 
         // Cột 1: Ngày mượn
         tableBorrowedBooks->setItem(i, 1,
-            new QTableWidgetItem(QString::fromStdString(mt.ngay_muon)));
+                                    new QTableWidgetItem(QString::fromStdString(mt.ngay_muon)));
 
         // Cột 2: Ngày trả
         tableBorrowedBooks->setItem(i, 2,
-            new QTableWidgetItem(QString::fromStdString(mt.ngay_tra)));
+                                    new QTableWidgetItem(QString::fromStdString(mt.ngay_tra)));
 
         // Cột 3: Trạng thái
         QString status;
-        switch (mt.trang_thai) {
-            case 0: status = "Đang mượn"; break;
-            case 1: status = "Đã trả"; break;
-            case 2: status = "Mất sách"; break;
-            default: status = "Không rõ"; break;
+        switch (mt.trang_thai)
+        {
+        case 0:
+            status = "Đang mượn";
+            break;
+        case 1:
+            status = "Đã trả";
+            break;
+        case 2:
+            status = "Mất sách";
+            break;
+        default:
+            status = "Không rõ";
+            break;
         }
         tableBorrowedBooks->setItem(i, 3,
-            new QTableWidgetItem(status));
+                                    new QTableWidgetItem(status));
 
         // Cột 4: Mã thẻ
         tableBorrowedBooks->setItem(i, 4,
-            new QTableWidgetItem(QString::number(mt.ma_the)));
+                                    new QTableWidgetItem(QString::number(mt.ma_the)));
     }
 }
 
-bool BorrowBookWindow::hasOverdueBooks() const {
+bool BorrowBookWindow::hasOverdueBooks() const
+{
     QDate today = QDate::currentDate();
 
-    for (const auto &b : borrowedBooks) {
-        if (b.trang_thai == 0) { // chỉ xét sách đang mượn
+    for (const auto &b : borrowedBooks)
+    {
+        if (b.trang_thai == 0)
+        { // chỉ xét sách đang mượn
             QDate borrowDate = QDate::fromString(
                 QString::fromStdString(b.ngay_muon), "yyyy-MM-dd"); // Sửa định dạng
-            if (borrowDate.isValid() && borrowDate.daysTo(today) > 7) {
+            if (borrowDate.isValid() && borrowDate.daysTo(today) > 7)
+            {
                 return true;
             }
         }
