@@ -59,21 +59,6 @@ void TheDocGiaManager::writeItem(std::ostream &out, const TheDocGia &obj)
         << obj.trang_thai << "\n";
 }
 
-int TheDocGiaManager::generateRandomId()
-{
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distrib(1000, 9999);
-
-    int newId;
-    do
-    {
-        newId = distrib(gen);
-    } while (isIdExist(newId));
-
-    return newId;
-}
-
 int TheDocGiaManager::addCard(const std::string &ho, const std::string &ten,
                               int phai, int trang_thai)
 {
@@ -91,7 +76,7 @@ int TheDocGiaManager::addCard(const std::string &ho, const std::string &ten,
     }
 
     // Tạo mã thẻ mới
-    int ma_the = generateRandomId();
+    int ma_the = id_mgr.next();
 
     // Tạo thẻ mới
     TheDocGia *newCard = new TheDocGia{

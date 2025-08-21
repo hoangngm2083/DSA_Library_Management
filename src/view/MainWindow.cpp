@@ -16,13 +16,9 @@ void MainWindow::createMenus()
 {
     QMenu *menuBorrow = menuBar()->addMenu("Mượn/Trả");
     menuBorrow->addAction("Mượn sách", this, &MainWindow::openBorrowBookWindow);
-    // menuBorrow->addAction("Trả sách", this, &MainWindow::openReturnBookWindow);
-    // menuBorrow->addAction("Danh sách sách độc giả đang mượn", this, &MainWindow::listBorrowedByReader);
 
-    QMenu *menuReader = menuBar()->addMenu("Độc giả");
-    menuReader->addAction("Nhập thẻ độc giả", this, &MainWindow::openCardManagement);
-    menuReader->addAction("In danh sách độc giả", this, &MainWindow::printReadersList);
-    menuReader->addAction("Độc giả mượn quá hạn", this, &MainWindow::listOverdueReaders);
+    QAction *actionReader = menuBar()->addAction("Độc giả");
+    connect(actionReader, &QAction::triggered, this, &MainWindow::openCardManagement);
 
     QMenu *menuBook = menuBar()->addMenu("Sách");
     menuBook->addAction("Nhập đầu sách", this, &MainWindow::openBookManagement);
@@ -35,7 +31,13 @@ void MainWindow::createMenus()
 
 void MainWindow::openCardManagement()
 {
-    QMessageBox::information(this, "Nhập thẻ độc giả", "Mở màn hình quản lý thẻ độc giả");
+    hideAllWindows();
+    if (!docgiaWindow)
+    {
+        docgiaWindow = new DocGiaWindow(centralWidget());
+        centralWidget()->layout()->addWidget(docgiaWindow);
+    }
+    docgiaWindow->show();
 }
 
 void MainWindow::printReadersList()
@@ -67,6 +69,7 @@ void MainWindow::searchBookByName()
 
 void MainWindow::openBorrowBookWindow()
 {
+    hideAllWindows();
     if (!borrowWindow)
     {
         borrowWindow = new BorrowBookWindow(centralWidget());
@@ -74,14 +77,6 @@ void MainWindow::openBorrowBookWindow()
     }
     borrowWindow->show();
 }
-
-// void MainWindow::openReturnBookWindow() {
-//     QMessageBox::information(this, "Trả sách", "Mở màn hình trả sách");
-// }
-
-// void MainWindow::listBorrowedByReader() {
-//     QMessageBox::information(this, "Danh sách sách", "Liệt kê sách đang mượn theo thẻ...");
-// }
 
 void MainWindow::listOverdueReaders()
 {
@@ -91,4 +86,12 @@ void MainWindow::listOverdueReaders()
 void MainWindow::top10BorrowedBooks()
 {
     QMessageBox::information(this, "Top 10 sách", "In 10 sách có số lượt mượn nhiều nhất...");
+}
+
+void MainWindow::hideAllWindows()
+{
+    if (borrowWindow)
+        borrowWindow->hide();
+    if (docgiaWindow)
+        docgiaWindow->hide();
 }

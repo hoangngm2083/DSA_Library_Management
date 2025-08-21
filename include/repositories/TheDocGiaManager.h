@@ -9,8 +9,7 @@
 #include <stdexcept>
 #include <string>
 #include <limits>
-
-#include <random>
+#include "repositories/IdManager.h"
 
 class TheDocGiaManager : public BaseManager<TheDocGia>
 {
@@ -18,7 +17,6 @@ private:
     BST<TheDocGia *> bst;
 
     // Hàm tạo ID ngẫu nhiên không trùng
-    int generateRandomId();
     bool readItem(std::istream &in, TheDocGia &obj) override;
     void writeItem(std::ostream &out, const TheDocGia &obj) override;
     void saveItems() override;

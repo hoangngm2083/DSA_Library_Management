@@ -8,36 +8,40 @@ LinearList<T>::LinearList(int initialCapacity)
     n = 0;
     capacity = initialCapacity;
     nodes = new T[capacity]; // Đảm bảo cấp phát thành công
-    if (nodes == nullptr) {
+    if (nodes == nullptr)
+    {
         throw std::bad_alloc(); // Xử lý lỗi cấp phát bộ nhớ
     }
 }
 
 template <typename T>
-LinearList<T>::LinearList(const LinearList& other)
+LinearList<T>::LinearList(const LinearList &other)
 {
     n = other.n;
     capacity = other.capacity;
     nodes = new T[capacity];
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
+    {
         nodes[i] = other.nodes[i];
     }
 }
 
 template <typename T>
-LinearList<T>& LinearList<T>::operator=(const LinearList<T>& other) {
-    if (this != &other) {
+LinearList<T> &LinearList<T>::operator=(const LinearList<T> &other)
+{
+    if (this != &other)
+    {
         delete[] nodes; // Giải phóng bộ nhớ cũ
         n = other.n;
         capacity = other.capacity;
         nodes = new T[capacity];
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++)
+        {
             nodes[i] = other.nodes[i];
         }
     }
     return *this;
 }
-
 
 // Destructor
 template <typename T>
@@ -165,4 +169,40 @@ template <typename T>
 void LinearList<T>::clear()
 {
     n = 0;
+}
+
+// QuickSort implementation
+template <typename T>
+void LinearList<T>::quickSort(int left, int right, std::function<int(const T &, const T &)> compare)
+{
+    if (left < right)
+    {
+        int pivotIndex = partition(left, right, compare);
+        quickSort(left, pivotIndex - 1, compare);
+        quickSort(pivotIndex + 1, right, compare);
+    }
+}
+
+template <typename T>
+int LinearList<T>::partition(int left, int right, std::function<int(const T &, const T &)> compare)
+{
+    T &pivot = nodes[right]; // Chọn phần tử cuối làm pivot
+    int i = left;
+
+    for (int j = left; j < right; j++)
+    {
+        if (compare(nodes[j], pivot) <= 0)
+        {
+            std::swap(nodes[i], nodes[j]);
+            i++;
+        }
+    }
+    std::swap(nodes[i], nodes[right]); // Đặt pivot vào đúng vị trí
+    return i;                          // Trả về vị trí của pivot
+}
+
+template <typename T>
+void LinearList<T>::sort(std::function<int(const T &, const T &)> compare)
+{
+    quickSort(0, n - 1, compare);
 }

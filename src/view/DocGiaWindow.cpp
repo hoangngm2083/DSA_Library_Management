@@ -1,0 +1,219 @@
+#include "view/DocGiaWindow.h"
+
+DocGiaWindow::DocGiaWindow(QWidget *parent)
+    : QWidget(parent)
+{
+    auto *mainLayout = new QVBoxLayout(this);
+
+    // Thanh tìm kiếm
+    auto *searchLayout = new QHBoxLayout();
+    searchInput = new QLineEdit(this);
+    btnSearch = new QPushButton("Tìm kiếm", this);
+    searchLayout->addWidget(searchInput);
+    searchLayout->addWidget(btnSearch);
+    mainLayout->addLayout(searchLayout);
+
+    // Bảng hiển thị
+    table = new QTableWidget(this);
+    table->setColumnCount(5);
+    QStringList headers;
+    headers << "Mã thẻ" << "Họ" << "Tên" << "Phái" << "Trạng thái";
+    table->setHorizontalHeaderLabels(headers);
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    mainLayout->addWidget(table);
+
+    // Nhóm nút chức năng
+    auto *btnLayout = new QHBoxLayout();
+    btnAdd = new QPushButton("Thêm thẻ độc giả", this);
+    btnDelete = new QPushButton("Xóa thẻ độc giả", this);
+    btnSortByName = new QPushButton("Sắp xếp theo tên", this);
+    btnSortById = new QPushButton("Sắp xếp theo mã", this);
+    btnEdit = new QPushButton("Hiệu chỉnh thẻ độc giả", this);
+    btnLayout->addWidget(btnAdd);
+    btnLayout->addWidget(btnEdit);
+    btnLayout->addWidget(btnDelete);
+    btnLayout->addWidget(btnSortByName);
+    btnLayout->addWidget(btnSortById);
+    mainLayout->addLayout(btnLayout);
+
+    // Load dữ liệu ban đầu
+    loadAllDocGia();
+
+    // Kết nối signal-slot
+    connect(btnAdd, &QPushButton::clicked, this, &DocGiaWindow::openThemTheDocGiaDialog);
+    connect(btnSearch, &QPushButton::clicked, this, &DocGiaWindow::searchTheDocGia);
+    connect(btnDelete, &QPushButton::clicked, this, &DocGiaWindow::deleteTheDocGia);
+    connect(btnEdit, &QPushButton::clicked, this, &DocGiaWindow::editTheDocGia);
+    connect(btnSortByName, &QPushButton::clicked, this, &DocGiaWindow::sortByName);
+    connect(btnSortById, &QPushButton::clicked, this, &DocGiaWindow::sortById);
+}
+
+void DocGiaWindow::openThemTheDocGiaDialog()
+{
+    TheDocGiaDialog dialog(true, this); // chế độ thêm mới
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        // gọi manager thêm thẻ mới (tùy logic bạn có thể auto-generate mã thẻ trong manager)
+        if (tdg_mgr.addCard(dialog.getHo().toStdString(),
+                            dialog.getTen().toStdString(),
+                            dialog.getPhai(),
+                            dialog.getTrangThai()))
+        {
+            loadAllDocGia();
+            QMessageBox::information(this, "Thành công", "Đã thêm thẻ độc giả mới.");
+        }
+        else
+        {
+            QMessageBox::warning(this, "Thất bại", "Không thể thêm thẻ độc giả.");
+        }
+    }
+}
+
+void DocGiaWindow::searchTheDocGia()
+{
+    QString input = searchInput->text().trimmed();
+    if (input.isEmpty())
+    {
+        // Nếu không nhập gì thì load lại tất cả
+        auto list = tdg_mgr.getAllCards();
+        displayResults(list);
+        return;
+    }
+
+    bool ok;
+    int maThe = input.toInt(&ok);
+    if (!ok)
+    {
+        QMessageBox::warning(this, "Lỗi", "Vui lòng nhập mã thẻ hợp lệ!");
+        return;
+    }
+
+    TheDocGia *dg = tdg_mgr.searchCard(maThe);
+    table->setRowCount(0);
+    if (dg)
+    {
+        table->insertRow(0);
+        table->setItem(0, 0, new QTableWidgetItem(QString::number(dg->ma_the)));
+        table->setItem(0, 1, new QTableWidgetItem(QString::fromStdString(dg->ho)));
+        table->setItem(0, 2, new QTableWidgetItem(QString::fromStdString(dg->ten)));
+        table->setItem(0, 3, new QTableWidgetItem(dg->phai == 0 ? "Nam" : "Nữ"));
+        table->setItem(0, 4, new QTableWidgetItem(dg->trang_thai == 1 ? "Thẻ đang hoạt động" : "Thẻ bị khóa"));
+    }
+    else
+    {
+        QMessageBox::information(this, "Kết quả", "Không tìm thấy thẻ độc giả.");
+    }
+}
+
+void DocGiaWindow::deleteTheDocGia()
+{
+    auto selected = table->currentRow();
+    if (selected < 0)
+    {
+        QMessageBox::warning(this, "Lỗi", "Vui lòng chọn một thẻ để xóa!");
+        return;
+    }
+
+    int maThe = table->item(selected, 0)->text().toInt();
+    auto reply = QMessageBox::question(this, "Xác nhận",
+                                       "Bạn có chắc chắn muốn xóa thẻ này?",
+                                       QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes)
+    {
+        if (tdg_mgr.removeCard(maThe))
+        {
+            loadAllDocGia();
+            QMessageBox::information(this, "Thành công", "Đã xóa thẻ độc giả.");
+        }
+        else
+        {
+            QMessageBox::warning(this, "Thất bại", "Không thể xóa thẻ độc giả.");
+        }
+    }
+}
+
+void DocGiaWindow::sortByName()
+{
+    auto list = tdg_mgr.getAllCards();
+    list.sort([](const TheDocGia &a, const TheDocGia &b) -> int
+              {
+                std::string fullNameA = a.ten + " " + a.ho;
+                std::string fullNameB = b.ten + " " + b.ho;
+                if (fullNameA < fullNameB) return -1;
+                if (fullNameA > fullNameB) return 1;
+                return 0; });
+    displayResults(list);
+}
+
+void DocGiaWindow::sortById()
+{
+    auto list = tdg_mgr.getAllCards();
+    list.sort([](const TheDocGia &a, const TheDocGia &b) -> int
+              {
+                if (a.ma_the < b.ma_the) return -1;
+                if (a.ma_the > b.ma_the) return 1;
+                return 0; });
+    displayResults(list);
+}
+
+void DocGiaWindow::loadAllDocGia()
+{
+    auto list = tdg_mgr.getAllCards();
+    displayResults(list);
+}
+
+void DocGiaWindow::displayResults(const LinearList<TheDocGia> &list)
+{
+    table->setRowCount(0);
+    for (int i = 0; i < list.size(); i++)
+    {
+        const auto &dg = list[i];
+        int row = table->rowCount();
+        table->insertRow(row);
+        table->setItem(row, 0, new QTableWidgetItem(QString::number(dg.ma_the)));
+        table->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(dg.ho)));
+        table->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(dg.ten)));
+        table->setItem(row, 3, new QTableWidgetItem(dg.phai == 0 ? "Nam" : "Nữ"));
+        table->setItem(row, 4, new QTableWidgetItem(dg.trang_thai == 1 ? "Thẻ đang hoạt động" : "Thẻ bị khóa"));
+    }
+}
+
+void DocGiaWindow::editTheDocGia()
+{
+    auto selected = table->currentRow();
+    if (selected < 0)
+    {
+        QMessageBox::warning(this, "Lỗi", "Vui lòng chọn một thẻ để hiệu chỉnh!");
+        return;
+    }
+
+    int maThe = table->item(selected, 0)->text().toInt();
+    TheDocGia *dg = tdg_mgr.searchCard(maThe);
+    if (!dg)
+    {
+        QMessageBox::warning(this, "Lỗi", "Không tìm thấy thẻ độc giả.");
+        return;
+    }
+
+    TheDocGiaDialog dialog(*dg, this); // chế độ hiệu chỉnh
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        if (tdg_mgr.updateCard(dialog.getMaThe(),
+                               dialog.getHo().toStdString(),
+                               dialog.getTen().toStdString(),
+                               dialog.getPhai(),
+                               dialog.getTrangThai()))
+        {
+            loadAllDocGia();
+            QMessageBox::information(this, "Thành công", "Đã hiệu chỉnh thẻ độc giả.");
+        }
+        else
+        {
+            QMessageBox::warning(this, "Thất bại", "Không thể hiệu chỉnh thẻ độc giả.");
+        }
+    }
+}

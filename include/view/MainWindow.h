@@ -6,6 +6,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QVBoxLayout>
+#include "view/DocGiaWindow.h"
 
 class MainWindow : public QMainWindow
 {
@@ -28,5 +29,7 @@ private slots:
 
 private:
     void createMenus();
+    void hideAllWindows();
     BorrowBookWindow *borrowWindow = nullptr;
+    DocGiaWindow *docgiaWindow = nullptr;
 };

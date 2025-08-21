@@ -14,8 +14,8 @@ private:
 public:
     // Constructor
     LinearList(int initialCapacity = 10000);
-    LinearList(const LinearList& other);
-    LinearList& operator=(const LinearList& other);
+    LinearList(const LinearList &other);
+    LinearList &operator=(const LinearList &other);
 
     // Destructor
     ~LinearList();
@@ -61,6 +61,11 @@ public:
 
     // Xóa toàn bộ danh sách
     void clear();
+
+    // QuickSort
+    void quickSort(int left, int right, std::function<int(const T &, const T &)> compare);
+    int partition(int left, int right, std::function<int(const T &, const T &)> compare);
+    void sort(std::function<int(const T &, const T &)> compare);
 };
 
 #include "../../src/data_structs/LinearList.tpp"
