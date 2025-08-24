@@ -2,12 +2,14 @@
 #include <QMainWindow>
 #include "view/BorrowBookWindow.h"
 #include "view/ThemDauSachDialog.h"
+#include "view/TimTenSachDialog.h"
 #include "view/ThemDanhMucSachDialog.h"
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QVBoxLayout>
 #include "view/DocGiaWindow.h"
 #include "view/InDauSachWindow.h"
+
 
 class MainWindow : public QMainWindow
 {

@@ -62,7 +62,7 @@ void MainWindow::printBooksByCategory()
     hideAllWindows();
     if (!inDauSachWindow)
     {
-        inDauSachWindow = new InDauSachWindow(centralWidget()); // ✅ dùng class mới
+        inDauSachWindow = new InDauSachWindow(centralWidget()); 
         centralWidget()->layout()->addWidget(inDauSachWindow);
     }
     inDauSachWindow->show();
@@ -70,7 +70,8 @@ void MainWindow::printBooksByCategory()
 
 void MainWindow::searchBookByName()
 {
-    QMessageBox::information(this, "Tìm sách", "Mở màn hình tìm sách theo tên");
+    TimTenSachDialog dialog(this);
+    dialog.exec();
 }
 
 void MainWindow::openBorrowBookWindow()

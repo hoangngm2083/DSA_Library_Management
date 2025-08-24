@@ -51,8 +51,8 @@ void InDauSachWindow::loadBooksByCategory()
     // Sắp xếp: thể loại ↑, sau đó tên sách ↑
     allBooks.sort([](const DauSach &a, const DauSach &b) {
         if (a.the_loai == b.the_loai)
-            return a.ten_sach < b.ten_sach;
-        return a.the_loai < b.the_loai;
+            return a.ten_sach > b.ten_sach;
+        return a.the_loai > b.the_loai;
     });
 
     for (int i = 0; i < allBooks.size(); ++i)
