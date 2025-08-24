@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QVBoxLayout>
 #include "view/DocGiaWindow.h"
+#include "view/InDauSachWindow.h"
 
 class MainWindow : public QMainWindow
 {
@@ -32,4 +33,5 @@ private:
     void hideAllWindows();
     BorrowBookWindow *borrowWindow = nullptr;
     DocGiaWindow *docgiaWindow = nullptr;
+    InDauSachWindow *inDauSachWindow = nullptr;
 };

@@ -59,7 +59,13 @@ void MainWindow::openBookManagement()
 
 void MainWindow::printBooksByCategory()
 {
-    QMessageBox::information(this, "Danh sách sách", "In danh sách sách theo thể loại...");
+    hideAllWindows();
+    if (!inDauSachWindow)
+    {
+        inDauSachWindow = new InDauSachWindow(centralWidget()); // ✅ dùng class mới
+        centralWidget()->layout()->addWidget(inDauSachWindow);
+    }
+    inDauSachWindow->show();
 }
 
 void MainWindow::searchBookByName()
