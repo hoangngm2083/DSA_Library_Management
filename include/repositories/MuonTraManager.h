@@ -16,8 +16,8 @@ private:
 
     bool readItem(std::istream &in, MuonTra &obj) override;
     void writeItem(std::ostream &out, const MuonTra &obj) override;
-    void saveItems()  override;
-    void loadItems()  override;
+    void saveItems() override;
+    void loadItems() override;
 
 public:
     MuonTraManager();
@@ -35,16 +35,16 @@ public:
                       const std::string &ngay_tra, int trang_thai);
 
     // Search for a borrowing record by ma_sach and ma_the
-    MuonTra *searchRecord(const std::string &ma_sach, const std::string &ngay_muon) ;
+    MuonTra *searchRecord(const std::string &ma_sach, const std::string &ngay_muon);
     // Overload: search by ma_the
-    LinkedList<MuonTra *> searchRecords(int ma_the) ;
+    LinkedList<MuonTra *> searchRecords(int ma_the);
 
     // Get all borrowing records
-    LinearList<MuonTra> getAllRecords() ;
+    LinearList<MuonTra> getAllRecords();
 
     // Check if a borrowing record exists
-    bool isRecordExist(const std::string &ma_sach, const std::string &ngay_muon) ;
-    bool isBorrowing(const std::string &ma_sach) ;
+    bool isRecordExist(const std::string &ma_sach, const std::string &ngay_muon);
+    bool isBorrowing(const std::string &ma_sach);
 };
 
 extern MuonTraManager muontra_mgr;

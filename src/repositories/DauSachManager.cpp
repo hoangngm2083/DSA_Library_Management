@@ -216,6 +216,7 @@ LinearList<DauSach> DauSachManager::searchLikeTenSach(const std::string &keyword
     for (int i = 0; i < list.size(); i++)
     {
         std::string tenLower = toLower(list[i]->ten_sach);
+        std::cout << tenLower << std::endl;
         if (tenLower.find(keyLower) != std::string::npos)
         {                          // std::string::npos là một hằng số đặc biệt của std::string dùng để biểu thị "không tìm thấy".
             result.push(*list[i]); // trả về danh sách các kết quả khớp

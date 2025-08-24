@@ -8,6 +8,7 @@
 #include <string>
 #include <stdexcept>
 #include <limits>
+#include "repositories/IdManager.h"
 
 class DanhMucSachManager : public BaseManager<DanhMucSach>
 {

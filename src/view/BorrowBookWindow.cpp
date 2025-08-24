@@ -55,7 +55,18 @@ void BorrowBookWindow::onFindClicked()
     QString cardIdStr = lineEditCardId->text().trimmed();
     if (cardIdStr.isEmpty())
     {
-        QMessageBox::warning(this, "Lỗi", "Vui lòng nhập mã thẻ độc giả!");
+        auto list = muontra_mgr.getAllRecords();
+
+        borrowedBooks.clear();
+        // capture tất cả biến bên ngoài theo tham chiếu.
+        list.traverse([&](MuonTra value)
+                      {
+        if(value.trang_thai == 0)
+        {
+            borrowedBooks.append(value);   // copy từ con trỏ ra QVector
+        } });
+
+        updateBorrowedBooksTable();
         return;
     }
 
@@ -79,6 +90,7 @@ void BorrowBookWindow::onFindClicked()
     auto list = muontra_mgr.searchRecords(cardId);
 
     borrowedBooks.clear();
+    // capture tất cả biến bên ngoài theo tham chiếu.
     list.traverse([&](MuonTra *value)
                   {
         if(value->trang_thai == 0)

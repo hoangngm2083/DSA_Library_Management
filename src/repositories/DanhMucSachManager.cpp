@@ -61,8 +61,12 @@ std::string DanhMucSachManager::addRecord(int trang_thai, const std::string &vi_
         throw std::invalid_argument("Trạng thái chỉ nhận giá trị 0 (có sẵn), 1 (đã mượn), hoặc 2 (thanh lý)");
     }
 
-    LinkedList<DanhMucSach *> tmp = dms_mgr.searchRecords(ISBN);
-    std::string ma_sach = std::to_string(ISBN) + "_" + std::to_string(tmp.getSize() + 1);
+    // Tạo mã thẻ mới
+    std::string ma_sach = std::to_string(id_mgr.next());
+    while (isRecordExist(ma_sach))
+    {
+        ma_sach = std::to_string(id_mgr.next());
+    }
 
     // Create new book record
     DanhMucSach *newRecord = new DanhMucSach{

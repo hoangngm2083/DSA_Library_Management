@@ -77,6 +77,10 @@ int TheDocGiaManager::addCard(const std::string &ho, const std::string &ten,
 
     // Tạo mã thẻ mới
     int ma_the = id_mgr.next();
+    while (isIdExist(ma_the))
+    {
+        ma_the = id_mgr.next();
+    }
 
     // Tạo thẻ mới
     TheDocGia *newCard = new TheDocGia{

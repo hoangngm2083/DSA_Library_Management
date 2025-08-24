@@ -9,8 +9,10 @@ DocGiaWindow::DocGiaWindow(QWidget *parent)
     auto *searchLayout = new QHBoxLayout();
     searchInput = new QLineEdit(this);
     btnSearch = new QPushButton("Tìm kiếm", this);
+    btnAdd = new QPushButton("Thêm", this);
     searchLayout->addWidget(searchInput);
     searchLayout->addWidget(btnSearch);
+    searchLayout->addWidget(btnAdd);
     mainLayout->addLayout(searchLayout);
 
     // Bảng hiển thị
@@ -28,12 +30,12 @@ DocGiaWindow::DocGiaWindow(QWidget *parent)
 
     // Nhóm nút chức năng
     auto *btnLayout = new QHBoxLayout();
-    btnAdd = new QPushButton("Thêm thẻ độc giả", this);
-    btnDelete = new QPushButton("Xóa thẻ độc giả", this);
+    btnDelete = new QPushButton("Xóa", this);
     btnSortByName = new QPushButton("Sắp xếp theo tên", this);
     btnSortById = new QPushButton("Sắp xếp theo mã", this);
-    btnEdit = new QPushButton("Hiệu chỉnh thẻ độc giả", this);
-    btnLayout->addWidget(btnAdd);
+    btnEdit = new QPushButton("Hiệu chỉnh", this);
+    btnDsMuonQH = new QPushButton("Mượn sách quá hạn", this);
+    btnLayout->addWidget(btnDsMuonQH);
     btnLayout->addWidget(btnEdit);
     btnLayout->addWidget(btnDelete);
     btnLayout->addWidget(btnSortByName);
@@ -44,6 +46,7 @@ DocGiaWindow::DocGiaWindow(QWidget *parent)
     loadAllDocGia();
 
     // Kết nối signal-slot
+    connect(btnDsMuonQH, &QPushButton::clicked, this, &DocGiaWindow::searchDsMuonQuaHan);
     connect(btnAdd, &QPushButton::clicked, this, &DocGiaWindow::openThemTheDocGiaDialog);
     connect(btnSearch, &QPushButton::clicked, this, &DocGiaWindow::searchTheDocGia);
     connect(btnDelete, &QPushButton::clicked, this, &DocGiaWindow::deleteTheDocGia);
@@ -107,6 +110,56 @@ void DocGiaWindow::searchTheDocGia()
     {
         QMessageBox::information(this, "Kết quả", "Không tìm thấy thẻ độc giả.");
     }
+}
+
+void DocGiaWindow::searchDsMuonQuaHan()
+{
+
+    auto dsmt = muontra_mgr.getAllRecords();
+    LinearList<MuonTra> list;
+    dsmt.traverse([&](MuonTra value)
+                  { 
+                                    if(value.trang_thai == 0 && this->isQuaHan(value.ngay_muon) )
+                                    {
+                                        list.push(value);
+                                    } });
+    list.sort([](const MuonTra &a, const MuonTra &b) -> int
+              {
+        if (a.ngay_muon > b.ngay_muon) return 1;
+        if (a.ngay_muon < b.ngay_muon) return -1;
+        return 0; });
+    LinearList<TheDocGia> dsDocGia;
+
+    list.traverse([&](MuonTra &value)
+                  { 
+    TheDocGia *tdg = tdg_mgr.searchCard(value.ma_the);
+    if (tdg != nullptr) {
+        dsDocGia.push(*tdg); 
+    } });
+
+    displayResults(dsDocGia);
+}
+
+bool DocGiaWindow::isQuaHan(const std::string &ngay_muon)
+{
+    QDate today = QDate::currentDate();
+    QDate borrowDate = QDate::fromString(
+        QString::fromStdString(ngay_muon), "yyyy-MM-dd");
+
+    if (!borrowDate.isValid())
+    {
+        return false; // hoặc xử lý lỗi
+    }
+
+    int days = borrowDate.daysTo(today);
+    int daysBorrowed = borrowDate.daysTo(today);
+
+    if (days > 7)
+    {
+        return true; // quá hạn
+    }
+
+    return false; // chưa quá hạn hoặc ngày mượn ở tương lai
 }
 
 void DocGiaWindow::deleteTheDocGia()

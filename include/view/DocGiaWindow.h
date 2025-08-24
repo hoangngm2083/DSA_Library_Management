@@ -12,6 +12,8 @@
 #include "view/TheDocGiaDialog.h"
 #include "data_structs/LinearList.h"
 #include "repositories/TheDocGiaManager.h"
+#include "repositories/MuonTraManager.h"
+#include <QDate>
 
 class DocGiaWindow : public QWidget
 {
@@ -26,6 +28,8 @@ private slots:
     void deleteTheDocGia();
     void sortByName();
     void sortById();
+    void searchDsMuonQuaHan();
+    bool isQuaHan(const std::string &ngay_muon);
 
 private:
     void loadAllDocGia();
@@ -38,5 +42,6 @@ private:
     QPushButton *btnDelete;
     QPushButton *btnSortByName;
     QPushButton *btnSortById;
+    QPushButton *btnDsMuonQH;
     QTableWidget *table;
 };

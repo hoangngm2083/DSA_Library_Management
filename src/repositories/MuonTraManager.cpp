@@ -86,7 +86,7 @@ bool MuonTraManager::removeRecord(const std::string &ma_sach, const std::string 
     }
     this->list.deleteValue(record); // Chỉ cần truyền con trỏ record
     this->saveItems();
-    return true;                    // Trả về true nếu xóa thành công
+    return true; // Trả về true nếu xóa thành công
 }
 
 bool MuonTraManager::updateRecord(const std::string &ma_sach, const std::string &ngay_muon, const std::string &ngay_tra, int trang_thai)
@@ -147,14 +147,15 @@ bool MuonTraManager::isRecordExist(const std::string &ma_sach, const std::string
     return searchRecord(ma_sach, ngay_muon) != nullptr;
 }
 
-bool  MuonTraManager::isBorrowing(const std::string &ma_sach) {
+bool MuonTraManager::isBorrowing(const std::string &ma_sach)
+{
     this->loadItems();
     bool isBorrowing = false;
-    this->list.traverse([&isBorrowing, &ma_sach](MuonTra *value) { 
+    this->list.traverse([&isBorrowing, &ma_sach](MuonTra *value)
+                        { 
         if (value->ma_sach == ma_sach && value->trang_thai != 1) {
             isBorrowing = true;
-        }
-    });
+        } });
     return isBorrowing;
 }
 
@@ -176,5 +177,3 @@ void MuonTraManager::loadItems()
         list.insertLast(itemPtr);
     }
 }
-
-

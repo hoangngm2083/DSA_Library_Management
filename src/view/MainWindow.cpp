@@ -14,8 +14,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), borrowWindow(null
 
 void MainWindow::createMenus()
 {
-    QMenu *menuBorrow = menuBar()->addMenu("Mượn/Trả");
-    menuBorrow->addAction("Mượn sách", this, &MainWindow::openBorrowBookWindow);
+
+    QAction *actionMuonTra = menuBar()->addAction("Mượn/Trả");
+    connect(actionMuonTra, &QAction::triggered, this, &MainWindow::openBorrowBookWindow);
 
     QAction *actionReader = menuBar()->addAction("Độc giả");
     connect(actionReader, &QAction::triggered, this, &MainWindow::openCardManagement);
@@ -62,7 +63,7 @@ void MainWindow::printBooksByCategory()
     hideAllWindows();
     if (!inDauSachWindow)
     {
-        inDauSachWindow = new InDauSachWindow(centralWidget()); 
+        inDauSachWindow = new InDauSachWindow(centralWidget());
         centralWidget()->layout()->addWidget(inDauSachWindow);
     }
     inDauSachWindow->show();
@@ -101,4 +102,6 @@ void MainWindow::hideAllWindows()
         borrowWindow->hide();
     if (docgiaWindow)
         docgiaWindow->hide();
+    if (inDauSachWindow)
+        inDauSachWindow->hide();
 }

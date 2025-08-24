@@ -5,7 +5,8 @@
 #include "data_structs/HashSet.h"
 #include "BaseManager.h"
 
-class IdManager : public BaseManager<int> {
+class IdManager : public BaseManager<int>
+{
     std::mt19937 gen;
     std::uniform_int_distribution<int> dist;
     HashSet used; // tập lưu các ID đã sinh
@@ -18,17 +19,21 @@ private:
 
 public:
     IdManager()
-      : BaseManager("data/card_ids.txt"),   // file lưu ID đã sinh
-        gen(std::random_device{}()),
-        dist(100000, 999999) {
+        : BaseManager("data/ids.txt"), // file lưu ID đã sinh
+          gen(std::random_device{}()),
+          dist(100000, 999999) // tạo ra các số nguyên ngẫu nhiên trong một khoảng giá trị xác định, với phân phối đều
+    {
         this->loadItems(); // đọc các ID đã sinh từ file
     }
 
-    int next() {
+    int next()
+    {
         this->loadItems();
-        while (true) {
+        while (true)
+        {
             int id = dist(gen);
-            if (used.insert(id)){
+            if (used.insert(id))
+            {
                 this->saveItems();
                 return id;
             } // chưa trùng
